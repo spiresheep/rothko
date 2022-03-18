@@ -26,7 +26,7 @@ def draw_outlined_rect(canvas, outline_width, fill, left, top, right, bottom):
   return result
 
 if __name__ == "__main__":
-  cells_to_draw = parse('demo_file_2.txt')
+  cells_to_draw = parse('demo_file.txt')
   min_size = get_min_dimensions(cells_to_draw)
   width = min_size[0]
   height = min_size[1]
