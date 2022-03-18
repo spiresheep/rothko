@@ -1,14 +1,17 @@
 # rothko
 A layout system for verifying and generating beautiful layouts.
 
-## To run app
+## To run app - Outdated
 1. Install Python 3.
 2. Install PySimpleGUI using the command `pip3 install pysimplegui`
 3. CD into the directory
 4. To run the code type `python3 rothko.py`
-### Windows
-1. Install Python
 
+## To build app for MacOS
+`ppyinstaller --onefile --windowed --icon boar.icns --name RothkoViewer rothko.py`
+
+## To build app for Windows
+?????????
 
 ## Limitations
 The layout breaks when the width is less than or equal the sum of the outline.
