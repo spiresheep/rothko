@@ -6,6 +6,9 @@ A layout system for verifying and generating beautiful layouts.
 2. Install PySimpleGUI using the command `pip3 install pysimplegui`
 3. CD into the directory
 4. To run the code type `python3 rothko.py`
+### Windows
+1. Install Python
+
 
 ## Limitations
 The layout breaks when the width is less than or equal the sum of the outline.

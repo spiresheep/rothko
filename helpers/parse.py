@@ -1,4 +1,4 @@
-from rothko.cell import Cell
+from helpers.cell import Cell
 import json
 
 def parse(file_name):

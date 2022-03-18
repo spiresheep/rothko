@@ -1,4 +1,4 @@
-from rothko.parse import parse
+from helpers.parse import parse
 import PySimpleGUI as sg
 
 def get_min_dimensions(cells):
