@@ -13,7 +13,7 @@ def get_min_dimensions(cells):
       max_height = bottom
   return [max_width, max_height]
 
-def draw_rectangle(canvas, outline_width, fill, left, top, right, bottom):
+def draw_outlined_rect(canvas, outline_width, fill, left, top, right, bottom):
   result = canvas.TKCanvas.create_rectangle(
     left,
     top,
@@ -72,11 +72,14 @@ if __name__ == "__main__":
       border_size = 2
       #draw blue lines 
       if width_color == 'blue':
-        draw_rectangle(
+        draw_outlined_rect(
           canvas, outline_width, 'blue',
-          left, top, right - outline_width, top + border_size + outline_width
+          left, 
+          top,
+          right - outline_width,
+          top + border_size + outline_width
         )
-        draw_rectangle(
+        draw_outlined_rect(
           canvas, outline_width, 'blue',
           left,
           bottom - border_size - (2 * outline_width),
@@ -84,22 +87,47 @@ if __name__ == "__main__":
           bottom - outline_width
         )
       if height_color == 'blue':
-        draw_rectangle(
-          canvas,
-          outline_width,
-          'blue',
+        draw_outlined_rect(
+          canvas, outline_width, 'blue',
           left,
           top,
           left + border_size + outline_width, bottom - outline_width
         )
-        draw_rectangle(canvas, outline_width, 'blue', right - border_size - (2 * outline_width), top, right - outline_width, bottom - outline_width)  #crap
+        draw_outlined_rect(
+          canvas, outline_width, 'blue',
+          right - border_size - (2 * outline_width),
+          top, right - outline_width,
+          bottom - outline_width
+        )
       # #draw yellow lines
       if width_color == 'yellow':
-        draw_rectangle(canvas, outline_width, '#ffbb00', left, top, right - outline_width, top + border_size + outline_width) #very good
-        draw_rectangle(canvas, outline_width, '#ffbb00', left, bottom - border_size - (2 * outline_width), right - outline_width, bottom- outline_width) #crap
+        draw_outlined_rect(
+          canvas, outline_width, '#ffbb00',
+          left,
+          top,
+          right - outline_width,
+          top + border_size + outline_width
+        )
+        draw_outlined_rect(
+          canvas, outline_width, '#ffbb00',
+          left, bottom - border_size - (2 * outline_width),
+          right - outline_width,
+          bottom- outline_width)
       if height_color == 'yellow':
-        draw_rectangle(canvas, outline_width, '#ffbb00', left, top, left + border_size + outline_width, bottom - outline_width)  #crap
-        draw_rectangle(canvas, outline_width, '#ffbb00', right - border_size - (2 * outline_width), top, right - outline_width, bottom - outline_width)  #crap
+        draw_outlined_rect(
+          canvas, outline_width, '#ffbb00',
+          left,
+          top,
+          left + border_size + outline_width,
+          bottom - outline_width
+        )
+        draw_outlined_rect(
+          canvas, outline_width, '#ffbb00',
+          right - border_size - (2 * outline_width),
+          top,
+          right - outline_width,
+          bottom - outline_width
+        )
     #write text
     if cell.name != '':
       middle_height = (top + bottom) / 2
