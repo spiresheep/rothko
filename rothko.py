@@ -1,4 +1,5 @@
 from helpers.parse import parse
+from helpers.cell import Cell
 import PySimpleGUI as sg
 
 def get_min_dimensions(cells):
@@ -26,7 +27,10 @@ def draw_outlined_rect(canvas, outline_width, fill, left, top, right, bottom):
   return result
 
 if __name__ == "__main__":
-  cells_to_draw = parse('demo_file.txt')
+  #cells_to_draw = parse('demo_file.txt')
+  cells_to_draw = [
+    Cell(0, 0, 100, 'blue', 100,'yellow', '')
+  ]
   min_size = get_min_dimensions(cells_to_draw)
   width = min_size[0]
   height = min_size[1]
