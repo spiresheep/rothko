@@ -7,8 +7,11 @@ A layout system for verifying and generating beautiful layouts.
 3. To run the code type `python3 rothko.py`
 
 ## Limitations
-The layout breaks when the width is less than 8px and the borders are different colors.
+The layout breaks when the width is less than or equal the sum of the outline
+and border. and the borders are different colors.
 
 It also breaks when the text is much wider than the cell it's in.
 
 There is no way to change the name of the file the document accepts.
+
+Solid colored sqaures blend into each other.
