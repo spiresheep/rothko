@@ -9,7 +9,7 @@
     },
     {
       "name": "B",
-      "horizontal": "100 yellow",
+      "horizontal": "100 blue",
       "vertical": "100 yellow",
       "top": 100,
       "left": 100
