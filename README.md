@@ -18,3 +18,8 @@ There is no way to change the name of the file the document accepts.
 Solid colored sqaures blend into each other.
 
 It expects NO OVERLAP.
+
+## TODO - Boring Super Secret Dev Notes
+1. File uploader rather than just using demo_file.txt
+2. Live/Hot update
+3. Cell Editor (?)
