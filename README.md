@@ -8,7 +8,11 @@ A layout system for verifying and generating beautiful layouts.
 4. To run the code type `python3 rothko.py`
 
 ## To build app for MacOS
-`ppyinstaller --onefile --windowed --icon boar.icns --name RothkoViewer rothko.py`
+
+`pyinstaller --onefile --windowed --icon boar.icns --name RothkoViewer rothko.py`
+
+ ## Actual command???!?!?
+pyinstaller --onefile --windowed --osx-bundle-identifier com.github.spiresheep --icon boar.icns --name RothkoViewer rothko.py
 
 ## To build app for Windows
 ?????????
