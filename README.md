@@ -8,14 +8,11 @@ A layout system for verifying and generating beautiful layouts.
 4. To run the code type `python3 rothko.py`
 
 ## To build app for MacOS
-
-`pyinstaller --onefile --windowed --icon boar.icns --name RothkoViewer rothko.py`
-
- ## Actual command???!?!?
-pyinstaller --onefile --windowed --osx-bundle-identifier com.github.spiresheep --icon boar.icns --name RothkoViewer rothko.py
+1. `pyinstaller --onefile --windowed --osx-bundle-identifier com.github.spiresheep --icon icon.icns --name RothkoViewer rothko.py`
+2. Then make the resulting files executable
 
 ## To build app for Windows
-?????????
+1. `pyinstaller --onefile --windowed --icon icon.ico --name RothkoViewer rothko.py`
 
 ## Limitations
 The layout breaks when the width is less than or equal the sum of the outline.
