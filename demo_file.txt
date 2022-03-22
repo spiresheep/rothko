@@ -1,30 +1,28 @@
 {
-  "cells": [
-    {
-      "name": "A",
-      "horizontal": "100 yellow",
-      "vertical": "100 yellow",
-      "top": 0,
-      "left": 0
-    },
-    {
-      "name": "B",
-      "horizontal": "100 yellow",
-      "vertical": "100 yellow",
-      "top": 100,
-      "left": 100
-    },
-    {
-      "horizontal": "100 blue",
-      "vertical": "100 blue",
-      "top": 100,
-      "left": 0
-    },
-    {
-      "horizontal": "100 blue",
-      "vertical": "100 blue",
-      "top": 0,
-      "left": 100
-    }
-  ]
+  name: "A",
+  horizontal: "100 fixed",
+  vertical: "100 fixed",
+  top: 0,
+  left: 0
+},
+{
+  name: "B",
+  horizontal: "100 fixed",
+  vertical: "100 fixed",
+  top: 100,
+  left: 100
+},
+{
+  name: "C",
+  horizontal: "100 fixed",
+  vertical: "100 flexable",
+  top: 100,
+  left: 0
+},
+{
+  name: "D",
+  horizontal: "100 fixed",
+  vertical: "100 flexable",
+  top: 0,
+  left: 100
 }
