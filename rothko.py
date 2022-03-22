@@ -14,7 +14,7 @@ def get_min_dimensions(cells):
       max_width = right
     if bottom > max_height:
       max_height = bottom
-  return [max_width, max_height]
+  return [max_width + 5, max_height + 5]
 
 def draw_outlined_rect(canvas, outline_width, fill, left, top, right, bottom):
   result = canvas.TKCanvas.create_rectangle(
@@ -24,7 +24,7 @@ def draw_outlined_rect(canvas, outline_width, fill, left, top, right, bottom):
     bottom,
     fill=fill,
     width=outline_width,
-    outline='white'
+    outline=colors['white']
   )
   return result
 
@@ -82,15 +82,22 @@ if __name__ == "__main__":
           right,
           bottom,
           fill=width_color,
-          outline=''
+          outline='',
+          width=0
         )
       #draw a mixed policy rectangle
       else:
-        canvas.TKCanvas.create_rectangle(
-          left, top, right, bottom, fill=colors['light_grey']
-        )
         outline_width = 1
         border_size = 2
+        canvas.TKCanvas.create_rectangle(
+          left,
+          top,
+          right,
+          bottom,
+          fill=colors['light_grey'],
+          outline='',
+          width=0
+        )
         #draw blue lines
         if height_color == colors['blue']:
           draw_outlined_rect( #north line
@@ -105,7 +112,7 @@ if __name__ == "__main__":
             left,
             bottom - border_size - (2 * outline_width),
             right - outline_width,
-            bottom - outline_width
+            bottom - outline_width #?????
           )
         if width_color == colors['blue']:
           draw_outlined_rect(#west line
