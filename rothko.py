@@ -1,5 +1,6 @@
 from helpers.parse import parse
 from helpers.cell import Cell
+from helpers.colors import colors
 import PySimpleGUI as sg
 import os
 
@@ -33,15 +34,15 @@ if __name__ == "__main__":
     Cell(0, 0, 100, 'blue', 100,'yellow', '')
   ]
   min_size = get_min_dimensions(cells_to_draw)
-  width = min_size[0]
-  height = min_size[1]
+  canvas_width = min_size[0]
+  canvas_height = min_size[1]
 
   # LAYOUT DETAILS
   layout = [
     [sg.Text('Source Layout File'), sg.Input(key='-sourcefile-', size=(45, 1)),
       sg.FileBrowse()],
-    [sg.Button('Make EXE', bind_return_key=True)],
-    [sg.Canvas(size=(width, height), background_color='black', key= 'canvas')]
+    [sg.Button('LOAD LAYOUT', bind_return_key=True)],
+    [sg.Canvas(size=(canvas_width, canvas_height), background_color='black', key= 'canvas')]
   ]
   window = sg.Window('Canvas test', layout)
   while True:
@@ -52,14 +53,14 @@ if __name__ == "__main__":
     source_file = values['-sourcefile-']
     source_path, source_filename = os.path.split(source_file)
 
-    if event == 'Make EXE':
+    if event == 'LOAD LAYOUT':
       try:
         cells_to_draw = parse(source_file)
         min_size = get_min_dimensions(cells_to_draw)
-        width = min_size[0]
-        height = min_size[1]
+        canvas_width = min_size[0]
+        canvas_height = min_size[1]
         canvas = window['canvas']
-        canvas.TKCanvas.configure(width=width, height=height)
+        canvas.TKCanvas.configure(width=canvas_width, height=canvas_height)
         window.refresh()
       except:
         cells_to_draw = []
@@ -71,89 +72,78 @@ if __name__ == "__main__":
       right = cell.get_right()
       top = cell.top
       bottom = cell.get_bottom()
-      width_color = cell.w_color
-      height_color = cell.h_color
-      yellow = '#ffbb00'
+      width_color = cell.w_color()
+      height_color = cell.h_color()
       #draw a solid color rectangle
-      if cell.w_color == cell.h_color:
-        if cell.w_color == 'yellow':
-          canvas.TKCanvas.create_rectangle(
-            left,
-            top,
-            right,
-            bottom,
-            fill=yellow,
-            outline=''
-          )
-        else:
-          canvas.TKCanvas.create_rectangle(
-            left,
-            top,
-            right,
-            bottom,
-            fill=cell.w_color,
-            outline=''
-          )
-      #draw a lined rectangle
+      if width_color == height_color:
+        canvas.TKCanvas.create_rectangle(
+          left,
+          top,
+          right,
+          bottom,
+          fill=width_color,
+          outline=''
+        )
+      #draw a mixed policy rectangle
       else:
         canvas.TKCanvas.create_rectangle(
-          left, top, right, bottom, fill='lightgrey'
+          left, top, right, bottom, fill=colors['light_grey']
         )
         outline_width = 1
         border_size = 2
-        #draw blue lines 
-        if width_color == 'blue':
-          draw_outlined_rect(
-            canvas, outline_width, 'blue',
+        #draw blue lines
+        if height_color == colors['blue']:
+          draw_outlined_rect( #north line
+            canvas, outline_width, colors['blue'],
             left, 
             top,
             right - outline_width,
             top + border_size + outline_width
           )
-          draw_outlined_rect(
-            canvas, outline_width, 'blue',
+          draw_outlined_rect(# south line
+            canvas, outline_width, colors['blue'],
             left,
             bottom - border_size - (2 * outline_width),
             right - outline_width,
             bottom - outline_width
           )
-        if height_color == 'blue':
-          draw_outlined_rect(
-            canvas, outline_width, 'blue',
+        if width_color == colors['blue']:
+          draw_outlined_rect(#west line
+            canvas, outline_width, colors['blue'],
             left,
             top,
             left + border_size + outline_width, bottom - outline_width
           )
-          draw_outlined_rect(
-            canvas, outline_width, 'blue',
+          draw_outlined_rect(#east line
+            canvas, outline_width, colors['blue'],
             right - border_size - (2 * outline_width),
             top, right - outline_width,
             bottom - outline_width
           )
         # #draw yellow lines
-        if width_color == 'yellow':
-          draw_outlined_rect(
-            canvas, outline_width, '#ffbb00',
+        if height_color == colors['yellow']:
+          draw_outlined_rect(#north line
+            canvas, outline_width, colors['yellow'],
             left,
             top,
             right - outline_width,
             top + border_size + outline_width
           )
-          draw_outlined_rect(
-            canvas, outline_width, '#ffbb00',
+          draw_outlined_rect(#south line
+            canvas, outline_width, colors['yellow'],
             left, bottom - border_size - (2 * outline_width),
             right - outline_width,
             bottom- outline_width)
-        if height_color == 'yellow':
-          draw_outlined_rect(
-            canvas, outline_width, '#ffbb00',
+        if width_color == colors['yellow']:
+          draw_outlined_rect(#west line
+            canvas, outline_width, colors['yellow'],
             left,
             top,
             left + border_size + outline_width,
             bottom - outline_width
           )
-          draw_outlined_rect(
-            canvas, outline_width, '#ffbb00',
+          draw_outlined_rect(#east line
+            canvas, outline_width, colors['yellow'],
             right - border_size - (2 * outline_width),
             top,
             right - outline_width,
