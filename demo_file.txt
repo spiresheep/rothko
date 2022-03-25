@@ -7,22 +7,22 @@
 },
 {
   name: "B",
-  horizontal: "100 fixed",
-  vertical: "100 fixed",
+  horizontal: "100 flexable",
+  vertical: "100 flexable",
   top: 100,
   left: 100
 },
 {
   name: "C",
   horizontal: "100 fixed",
-  vertical: "100 flexable",
+  vertical: "100 fixed",
   top: 100,
   left: 0
 },
 {
   name: "D",
   horizontal: "100 fixed",
-  vertical: "100 flexable",
+  vertical: "100 fixed",
   top: 0,
   left: 100
 }

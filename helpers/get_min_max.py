@@ -20,6 +20,29 @@ def get_current_size(cells):
     'current_height': max_height
   }
 
+def does_point_exist(width, height):
+  if(MIN_X <= width & width <= MAX_X & MIN_Y <= height & height <= MAX_Y):
+    return True
+  return False
+
+def explore(cells, matrix, width, height):
+  #shrink width
+  if(does_point_exist(width-1, height)):
+    if(True):
+      matrix[width-1][height] = True
+      explore(matrix, width-1, height)
+    else:
+      matrix[width-1][height] = False
+  #grow width
+  if(does_point_exist(width+1, height)):
+    if(True):
+      matrix[width+1][height] = True
+      explore(matrix, width+1, height)
+    else:
+      matrix[width+1][height] = False
+  return
+
+
 def get_min_max(cells):
   col=[]
   for x in range(MAX_X+1):
@@ -31,41 +54,10 @@ def get_min_max(cells):
   width = current_size['current_width']
   height = current_size['current_height']
   col[width][height]=True
-  explore(col, width, height)
-
-def does_point_exist(width, height):
-  if(MIN_X <= width & width <= MAX_X & MIN_Y <= height & height <= MAX_Y):
-    return True
-  return False
-
-def explore(matrix, width, height):
-  if(True):
-    explore(matrix, width-1, height)
-  if(True):
-    explore(matrix, width, height-1)
-  if(True):
-    explore(matrix, width+1, height)
-  if(True):
-    explore(matrix, width, height+1)
-  
-
-
-def try_x_shrink(matrix, width, height):
-  print('shrink x')
-  if(True):
-    return
-
-def try_y_shrink():
-  print('shrink x')
-  if(True):
-    return
-
-def try_y_shrink():
-  print('shrink x')
-  if(True):
-    return
-
-def try_y_grow():
-  print('shrink x')
-  if(True):
-    return
+  current_ends = {
+    "min_x": height,
+    "max_x": height,
+    "min_y": width,
+    "max_y": width,
+  }
+  explore(col, current_ends, width, height)
