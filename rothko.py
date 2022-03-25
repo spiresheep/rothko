@@ -42,6 +42,7 @@ if __name__ == "__main__":
     [sg.Text('Source Layout File'), sg.Input(key='-sourcefile-', size=(45, 1)),
       sg.FileBrowse()],
     [sg.Button('LOAD LAYOUT', bind_return_key=True)],
+    [sg.Text('Max_X: 0, Max_X: 2^24, Min_Y: 0, Max_Y: 2^24')],
     [sg.Canvas(size=(canvas_width, canvas_height), background_color='black', key= 'canvas')]
   ]
   window = sg.Window('Canvas test', layout)
