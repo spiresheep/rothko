@@ -17,7 +17,7 @@ def get_current_size(cells):
       max_height = bottom
   return {
     'current_width': max_width,
-    'current_height': max_height
+    'current_height': max_height 
   }
 
 def does_point_exist(width, height):
