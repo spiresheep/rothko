@@ -28,7 +28,7 @@ def draw_outlined_rect(canvas, outline_width, fill, left, top, right, bottom):
   )
   return result
 
-def redraw(width, height):
+def redraw(window, width, height):
   canvas = window['canvas']
   canvas.TKCanvas.configure(width=width, height=height)
   window.refresh()
@@ -139,8 +139,9 @@ def draw(canvas):
 def make_edit_window():
   layout = [
     [sg.Text("New Window", key="new")],
-    [sg.Text("Edit stuff here", key="new")],
-    [sg.Button('EDIT BUTTON CLICK')]
+    [sg.Text('Height'), sg.Input(key='HEIGHT')],
+    [sg.Text('Width'), sg.Input(key='WIDTH')],
+    [sg.Button('Update Size')]
   ]
   return sg.Window("Second Window", layout, finalize=True)
 
@@ -177,11 +178,13 @@ if __name__ == "__main__":
         min_size = get_min_dimensions(cells_to_draw)
         canvas_width = min_size[0]
         canvas_height = min_size[1]
-        redraw(canvas_width, canvas_height)
+        redraw(window1, canvas_width, canvas_height)
         draw(window['canvas'])
         make_edit_window()
       except:
         cells_to_draw = []
         sg.PopupError('Something went wrong')
-    if event == 'EDIT BUTTON CLICK':
-      print('Second window got clicked.')
+    if event == 'Update Size':
+      new_height = values['HEIGHT']
+      new_width = values['WIDTH']
+      redraw(window1, new_height, new_width)
