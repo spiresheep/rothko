@@ -33,6 +33,110 @@ def redraw(width, height):
   canvas.TKCanvas.configure(width=width, height=height)
   window.refresh()
 
+def draw(canvas):
+# canvas = window['canvas']
+  for cell in cells_to_draw:
+    left = cell.left
+    right = cell.get_right()
+    top = cell.top
+    bottom = cell.get_bottom()
+    width_color = cell.w_color()
+    height_color = cell.h_color()
+    #draw a solid color rectangle
+    if width_color == height_color:
+      canvas.TKCanvas.create_rectangle(
+        left,
+        top,
+        right,
+        bottom,
+        fill=width_color,
+        outline='',
+        width=0
+      )
+    #draw a mixed policy rectangle
+    else:
+      outline_width = 1
+      border_size = 2
+      canvas.TKCanvas.create_rectangle(
+        left,
+        top,
+        right,
+        bottom,
+        fill=colors['light_grey'],
+        outline='',
+        width=0
+      )
+      #draw blue lines
+      if height_color == colors['blue']:
+        draw_outlined_rect( #north line
+          canvas, outline_width, colors['blue'],
+          left, 
+          top,
+          right - outline_width,
+          top + border_size + outline_width
+        )
+        draw_outlined_rect(# south line
+          canvas, outline_width, colors['blue'],
+          left,
+          bottom - border_size - (2 * outline_width),
+          right - outline_width,
+          bottom - outline_width #?????
+        )
+      if width_color == colors['blue']:
+        draw_outlined_rect(#west line
+          canvas, outline_width, colors['blue'],
+          left,
+          top,
+          left + border_size + outline_width, bottom - outline_width
+        )
+        draw_outlined_rect(#east line
+          canvas, outline_width, colors['blue'],
+          right - border_size - (2 * outline_width),
+          top, right - outline_width,
+          bottom - outline_width
+        )
+      # #draw yellow lines
+      if height_color == colors['yellow']:
+        draw_outlined_rect(#north line
+          canvas, outline_width, colors['yellow'],
+          left,
+          top,
+          right - outline_width,
+          top + border_size + outline_width
+        )
+        draw_outlined_rect(#south line
+          canvas, outline_width, colors['yellow'],
+          left, bottom - border_size - (2 * outline_width),
+          right - outline_width,
+          bottom- outline_width)
+      if width_color == colors['yellow']:
+        draw_outlined_rect(#west line
+          canvas, outline_width, colors['yellow'],
+          left,
+          top,
+          left + border_size + outline_width,
+          bottom - outline_width
+        )
+        draw_outlined_rect(#east line
+          canvas, outline_width, colors['yellow'],
+          right - border_size - (2 * outline_width),
+          top,
+          right - outline_width,
+          bottom - outline_width
+        )
+    #write text
+    if cell.name != '':
+      middle_height = (top + bottom) / 2
+      middle_width = (left + right) / 2
+      canvas.TKCanvas.create_text(
+        middle_width,
+        middle_height,
+        text=cell.name,
+        width=(right-left),
+        fill='black'
+      )
+
+
 if __name__ == "__main__":
   # cells_to_draw = parse('demo_file.txt')
   cells_to_draw = [
@@ -55,119 +159,16 @@ if __name__ == "__main__":
     event, values = window.read()
     if event in ('Exit', 'Quit', None):
       break
-
-    source_file = values['-sourcefile-']
-    source_path, source_filename = os.path.split(source_file)
-
     if event == 'LOAD LAYOUT':
+      source_file = values['-sourcefile-']
+      source_path, source_filename = os.path.split(source_file)
       try:
         cells_to_draw = parse(source_file)
         min_size = get_min_dimensions(cells_to_draw)
         canvas_width = min_size[0]
         canvas_height = min_size[1]
         redraw(canvas_width, canvas_height)
+        draw(window['canvas'])
       except:
         cells_to_draw = []
         sg.PopupError('Something went wrong')
-    # Draw the cells
-    canvas = window['canvas']
-    for cell in cells_to_draw:
-      left = cell.left
-      right = cell.get_right()
-      top = cell.top
-      bottom = cell.get_bottom()
-      width_color = cell.w_color()
-      height_color = cell.h_color()
-      #draw a solid color rectangle
-      if width_color == height_color:
-        canvas.TKCanvas.create_rectangle(
-          left,
-          top,
-          right,
-          bottom,
-          fill=width_color,
-          outline='',
-          width=0
-        )
-      #draw a mixed policy rectangle
-      else:
-        outline_width = 1
-        border_size = 2
-        canvas.TKCanvas.create_rectangle(
-          left,
-          top,
-          right,
-          bottom,
-          fill=colors['light_grey'],
-          outline='',
-          width=0
-        )
-        #draw blue lines
-        if height_color == colors['blue']:
-          draw_outlined_rect( #north line
-            canvas, outline_width, colors['blue'],
-            left, 
-            top,
-            right - outline_width,
-            top + border_size + outline_width
-          )
-          draw_outlined_rect(# south line
-            canvas, outline_width, colors['blue'],
-            left,
-            bottom - border_size - (2 * outline_width),
-            right - outline_width,
-            bottom - outline_width #?????
-          )
-        if width_color == colors['blue']:
-          draw_outlined_rect(#west line
-            canvas, outline_width, colors['blue'],
-            left,
-            top,
-            left + border_size + outline_width, bottom - outline_width
-          )
-          draw_outlined_rect(#east line
-            canvas, outline_width, colors['blue'],
-            right - border_size - (2 * outline_width),
-            top, right - outline_width,
-            bottom - outline_width
-          )
-        # #draw yellow lines
-        if height_color == colors['yellow']:
-          draw_outlined_rect(#north line
-            canvas, outline_width, colors['yellow'],
-            left,
-            top,
-            right - outline_width,
-            top + border_size + outline_width
-          )
-          draw_outlined_rect(#south line
-            canvas, outline_width, colors['yellow'],
-            left, bottom - border_size - (2 * outline_width),
-            right - outline_width,
-            bottom- outline_width)
-        if width_color == colors['yellow']:
-          draw_outlined_rect(#west line
-            canvas, outline_width, colors['yellow'],
-            left,
-            top,
-            left + border_size + outline_width,
-            bottom - outline_width
-          )
-          draw_outlined_rect(#east line
-            canvas, outline_width, colors['yellow'],
-            right - border_size - (2 * outline_width),
-            top,
-            right - outline_width,
-            bottom - outline_width
-          )
-      #write text
-      if cell.name != '':
-        middle_height = (top + bottom) / 2
-        middle_width = (left + right) / 2
-        canvas.TKCanvas.create_text(
-          middle_width,
-          middle_height,
-          text=cell.name,
-          width=(right-left),
-          fill='black'
-        )
