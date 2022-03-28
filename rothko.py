@@ -14,7 +14,7 @@ def get_min_dimensions(cells):
       max_width = right
     if bottom > max_height:
       max_height = bottom
-  return [max_width + 5, max_height + 5]
+  return [max_width, max_height]
 
 def draw_outlined_rect(canvas, outline_width, fill, left, top, right, bottom):
   result = canvas.TKCanvas.create_rectangle(
@@ -27,6 +27,11 @@ def draw_outlined_rect(canvas, outline_width, fill, left, top, right, bottom):
     outline=colors['white']
   )
   return result
+
+def redraw(width, height):
+  canvas = window['canvas']
+  canvas.TKCanvas.configure(width=width, height=height)
+  window.refresh()
 
 if __name__ == "__main__":
   # cells_to_draw = parse('demo_file.txt')
@@ -60,9 +65,7 @@ if __name__ == "__main__":
         min_size = get_min_dimensions(cells_to_draw)
         canvas_width = min_size[0]
         canvas_height = min_size[1]
-        canvas = window['canvas']
-        canvas.TKCanvas.configure(width=canvas_width, height=canvas_height)
-        window.refresh()
+        redraw(canvas_width, canvas_height)
       except:
         cells_to_draw = []
         sg.PopupError('Something went wrong')
