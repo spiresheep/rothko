@@ -136,6 +136,23 @@ def draw(canvas):
         fill='black'
       )
 
+def make_edit_window():
+  layout = [
+    [sg.Text("New Window", key="new")],
+    [sg.Text("Edit stuff here", key="new")],
+    [sg.Button('EDIT BUTTON CLICK')]
+  ]
+  return sg.Window("Second Window", layout, finalize=True)
+
+def make_canvas_window():
+  layout = [
+    [sg.Text('Source Layout File'), sg.Input(key='-sourcefile-', size=(45, 1)),
+      sg.FileBrowse()],
+    [sg.Button('LOAD LAYOUT', bind_return_key=True)],
+    [sg.Text('Max_X: 0, Max_X: 2^24, Min_Y: 0, Max_Y: 2^24')],
+    [sg.Canvas(size=(canvas_width, canvas_height), background_color='black', key= 'canvas')]
+  ]
+  return sg.Window('Canvas test', layout, finalize=True)
 
 if __name__ == "__main__":
   # cells_to_draw = parse('demo_file.txt')
@@ -145,18 +162,11 @@ if __name__ == "__main__":
   min_size = get_min_dimensions(cells_to_draw)
   canvas_width = min_size[0]
   canvas_height = min_size[1]
-
   # LAYOUT DETAILS
-  layout = [
-    [sg.Text('Source Layout File'), sg.Input(key='-sourcefile-', size=(45, 1)),
-      sg.FileBrowse()],
-    [sg.Button('LOAD LAYOUT', bind_return_key=True)],
-    [sg.Text('Max_X: 0, Max_X: 2^24, Min_Y: 0, Max_Y: 2^24')],
-    [sg.Canvas(size=(canvas_width, canvas_height), background_color='black', key= 'canvas')]
-  ]
-  window = sg.Window('Canvas test', layout)
+  window1, window2 = make_canvas_window(), None
+  #window = sg.Window('Canvas test', layout)
   while True:
-    event, values = window.read()
+    window, event, values = sg.read_all_windows()
     if event in ('Exit', 'Quit', None):
       break
     if event == 'LOAD LAYOUT':
@@ -169,6 +179,9 @@ if __name__ == "__main__":
         canvas_height = min_size[1]
         redraw(canvas_width, canvas_height)
         draw(window['canvas'])
+        make_edit_window()
       except:
         cells_to_draw = []
         sg.PopupError('Something went wrong')
+    if event == 'EDIT BUTTON CLICK':
+      print('Second window got clicked.')
