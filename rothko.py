@@ -138,12 +138,12 @@ def draw(canvas):
 
 def make_edit_window():
   layout = [
-    [sg.Text("New Window", key="new")],
+    [sg.Text("Edit Values", key="new")],
     [sg.Text('Height'), sg.Input(key='HEIGHT')],
     [sg.Text('Width'), sg.Input(key='WIDTH')],
     [sg.Button('Update Size')]
   ]
-  return sg.Window("Second Window", layout, finalize=True)
+  return sg.Window("Edit Controls", layout, finalize=True)
 
 def make_canvas_window():
   layout = [
@@ -151,18 +151,11 @@ def make_canvas_window():
       sg.FileBrowse()],
     [sg.Button('LOAD LAYOUT', bind_return_key=True)],
     [sg.Text('Max_X: 0, Max_X: 2^24, Min_Y: 0, Max_Y: 2^24')],
-    [sg.Canvas(size=(canvas_width, canvas_height), background_color='black', key= 'canvas')]
+    [sg.Canvas(size=(600, 100), background_color='black', key= 'canvas')]
   ]
-  return sg.Window('Canvas test', layout, finalize=True)
+  return sg.Window('Layout Viewer', layout, finalize=True)
 
 if __name__ == "__main__":
-  # cells_to_draw = parse('demo_file.txt')
-  cells_to_draw = [
-    Cell(0, 0, 100, 'blue', 100,'yellow', '')
-  ]
-  min_size = get_min_dimensions(cells_to_draw)
-  canvas_width = min_size[0]
-  canvas_height = min_size[1]
   # LAYOUT DETAILS
   window1, window2 = make_canvas_window(), None
   #window = sg.Window('Canvas test', layout)
@@ -187,4 +180,6 @@ if __name__ == "__main__":
     if event == 'Update Size':
       new_height = values['HEIGHT']
       new_width = values['WIDTH']
+      #verify if height and width are possible.... if too big revert to max, else min
+      #if sizes are legit, calculate values
       redraw(window1, new_height, new_width)
