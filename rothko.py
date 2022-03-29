@@ -4,7 +4,7 @@ from helpers.colors import colors
 import PySimpleGUI as sg
 import os
 
-def get_min_dimensions(cells):
+def get_dimensions(cells):
   max_width = 0
   max_height = 0
   for cell in cells:
@@ -34,7 +34,6 @@ def redraw(window, width, height):
   window.refresh()
 
 def draw(canvas):
-# canvas = window['canvas']
   for cell in cells_to_draw:
     left = cell.left
     right = cell.get_right()
@@ -156,9 +155,9 @@ def make_canvas_window():
   return sg.Window('Layout Viewer', layout, finalize=True)
 
 if __name__ == "__main__":
-  # LAYOUT DETAILS
+  # Make windows
   window1, window2 = make_canvas_window(), None
-  #window = sg.Window('Canvas test', layout)
+  # While app is running
   while True:
     window, event, values = sg.read_all_windows()
     if event in ('Exit', 'Quit', None):
@@ -168,7 +167,7 @@ if __name__ == "__main__":
       source_path, source_filename = os.path.split(source_file)
       try:
         cells_to_draw = parse(source_file)
-        min_size = get_min_dimensions(cells_to_draw)
+        min_size = get_dimensions(cells_to_draw)
         canvas_width = min_size[0]
         canvas_height = min_size[1]
         redraw(window1, canvas_width, canvas_height)
@@ -178,8 +177,11 @@ if __name__ == "__main__":
         cells_to_draw = []
         sg.PopupError('Something went wrong')
     if event == 'Update Size':
-      new_height = values['HEIGHT']
-      new_width = values['WIDTH']
-      #verify if height and width are possible.... if too big revert to max, else min
-      #if sizes are legit, calculate values
-      redraw(window1, new_height, new_width)
+      try:
+        new_height = values['HEIGHT']
+        new_width = values['WIDTH']
+        #verify if height and width are possible.... if too big revert to max, else min
+        #if sizes are legit, calculate values
+        redraw(window1, new_height, new_width)
+      except:
+        sg.PopupError('Size is invalid')

@@ -9,11 +9,36 @@ class Cell:
     self.name = name
     self.w_rule = w_rule
     self.h_rule = h_rule
+    self.min_size = 0
+    self.max_size = 0
 
+  def get_name(self):
+    return self.cell.name;
+
+  def get_top(self):
+    return self.cell.top;
+
+  def top_left(self):
+    return self.cell.left;
+
+  def get_width(self):
+    return self.cell.width;
+
+  def get_height(self):
+    return self.cell.height;
+
+  def h_policy(self):
+    return self.h_rule
+
+  def w_policy(self):
+    return self.w_rule
+
+  #calculated
   def get_right(self):
     right = self.left + self.width
     return right
 
+  #calculated
   def get_bottom(self):
     bottom = self.top + self.height
     return bottom
