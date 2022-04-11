@@ -135,11 +135,11 @@ def draw(canvas):
         fill='black'
       )
 
-def make_edit_window():
+def make_edit_window(width, height):
   layout = [
     [sg.Text("Edit Values", key="new")],
-    [sg.Text('Height'), sg.Input(key='HEIGHT')],
-    [sg.Text('Width'), sg.Input(key='WIDTH')],
+    [sg.Text('Width'), sg.InputText(width, key='WIDTH')],
+    [sg.Text('Height'), sg.InputText(height, key='HEIGHT')],
     [sg.Button('Update Size')]
   ]
   return sg.Window("Edit Controls", layout, finalize=True)
@@ -172,7 +172,7 @@ if __name__ == "__main__":
         canvas_height = min_size[1]
         redraw(window1, canvas_width, canvas_height)
         draw(window['canvas'])
-        make_edit_window()
+        make_edit_window(canvas_width, canvas_height)
       except:
         cells_to_draw = []
         sg.PopupError('Something went wrong')
