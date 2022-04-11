@@ -10,7 +10,7 @@ colors = {
 def convert_policy_to_color(policy):
   if(policy == 'fixed'):
     return colors['yellow']
-  if(policy == 'flexable'):
+  if(policy == 'adaptable'):
     return colors['blue']
   else:
     return colors['error']
