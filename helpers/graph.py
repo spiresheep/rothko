@@ -1,12 +1,17 @@
 from helpers.cell import Cell
-from helpers.resizeable_cell import ResizeableCell
 
-MIN_WIDTH = 0
+# Layout upper and lover bounds.
 MIN_HEIGHT = 0
 MAX_WIDTH = 2^24
 MAX_HEIGHT = 2^24
 
-# Node class
+SOURCE = {
+  'WEST': 'west',
+  'SOUTH':'south'
+}
+
+# Derived from Cell.
+# Used to keep track of the neighbouting nodes and current width of the cell.
 class Node:
   def __init__(self, cell):
     self.cell = cell
@@ -25,7 +30,10 @@ class Node:
   def set_south(self, new_south):
     self.south = new_south
 
-# Graph Class
+  south=property(get_south, set_south)
+  east=property(get_east, set_east)
+
+# Used to keep track of the relationships between Nodes (derived from cells)
 class Graph:
   def __init__(self, cells):
     self.nodes = []
@@ -60,22 +68,6 @@ class Graph:
       for south in self.current_node.get_south():
         self.build_horizontal_graph(south)
       return
-
-  #helper to get the current size of the layout
-  def current_size(self):
-    max_width = 0
-    max_height = 0
-    for node in self.nodes:
-      right = node.cell.get_right()
-      bottom = node.get_bottom()
-      if right > max_width:
-        max_width = right
-      if bottom > max_height:
-        max_height = bottom
-    return {
-      'current_width': max_width,
-      'current_height': max_height
-    }
 
   def is_horizontal_1D(self):
     current_node = self.horizontal_source

@@ -1,6 +1,7 @@
-from helpers.cell import Cell
 import json
+from helpers.cell import Cell
 
+# Function that parses the layout configuration file and returns a list of cells.
 def parse(file_name):
   print('Start parse');
   file = open(file_name, 'r')
