@@ -1,10 +1,10 @@
+import os
+import PySimpleGUI as sg
 from helpers.parse import parse
 from helpers.cell import Cell
 from helpers.colors import colors
-import PySimpleGUI as sg
-import os
 
-def get_dimensions(cells):
+def get_current_dimensions(cells):
   max_width = 0
   max_height = 0
   for cell in cells:
@@ -39,8 +39,8 @@ def draw(canvas):
     right = cell.get_right()
     top = cell.top
     bottom = cell.get_bottom()
-    width_color = cell.w_color()
-    height_color = cell.h_color()
+    width_color = cell.get_w_color()
+    height_color = cell.get_h_color()
     #draw a solid color rectangle
     if width_color == height_color:
       canvas.TKCanvas.create_rectangle(
@@ -79,7 +79,7 @@ def draw(canvas):
           left,
           bottom - border_size - (2 * outline_width),
           right - outline_width,
-          bottom - outline_width #?????
+          bottom - outline_width #double check correctness
         )
       if width_color == colors['blue']:
         draw_outlined_rect(#west line
@@ -140,7 +140,7 @@ def make_edit_window(width, height):
     [sg.Text("Edit Values", key="new")],
     [sg.Text('Width'), sg.InputText(width, key='WIDTH')],
     [sg.Text('Height'), sg.InputText(height, key='HEIGHT')],
-    [sg.Button('Update Size')]
+    [sg.Button('Update Image')]
   ]
   return sg.Window("Edit Controls", layout, finalize=True)
 
@@ -167,7 +167,7 @@ if __name__ == "__main__":
       source_path, source_filename = os.path.split(source_file)
       try:
         cells_to_draw = parse(source_file)
-        min_size = get_dimensions(cells_to_draw)
+        min_size = get_current_dimensions(cells_to_draw)
         canvas_width = min_size[0]
         canvas_height = min_size[1]
         redraw(window1, canvas_width, canvas_height)
@@ -180,8 +180,6 @@ if __name__ == "__main__":
       try:
         new_height = values['HEIGHT']
         new_width = values['WIDTH']
-        #verify if height and width are possible.... if too big revert to max, else min
-        #if sizes are legit, calculate values
         redraw(window1, new_height, new_width)
       except:
         sg.PopupError('Size is invalid')
