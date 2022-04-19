@@ -3,70 +3,68 @@ from helpers.colors import convert_policy_to_color
 # Data about a single rectangle within the layout.
 class Cell:
   def __init__(self, top, left, width, w_policy, height, h_policy, name):
-    self.left = left
-    self.top = top
-    self.width = width
-    self.height = height
-    self.name = name
-    self.w_policy = w_policy
-    self.h_policy = h_policy
-    self.min_size = 0
-    self.max_size = 0
+    self._left = left
+    self._top = top
+    self._width = width
+    self._height = height
+    self._name = name
+    self._w_policy = w_policy
+    self._h_policy = h_policy
 
   def get_name(self):
-    return self.name;
+    return self._name;
 
   # Document
   def get_top(self):
-    return self.top;
+    return self._top;
 
   def set_top(self, top):
-    self.top = top
+    self._top = top
 
   # Document
   def get_left(self):
-    return self.left
+    return self._left
 
   def set_left(self, left):
-    self.left = left
+    self._left = left
 
   def get_width(self):
-    return self.width
+    return self._width
 
   def get_height(self):
-    return self.height;
+    return self._height;
 
   #calculated
   def get_right(self):
-    right = self.left + self.width
+    right = self._left + self._width
     return right
 
   #calculated
   def get_bottom(self):
-    bottom = self.top + self.height
+    bottom = self._top + self._height
     return bottom
 
   def get_h_policy(self):
-    return self.h_policy
+    return self._h_policy
 
   def get_w_policy(self):
-    return self.w_policy
+    return self._w_policy
 
   def get_h_color(self):
-    return convert_policy_to_color(self.h_policy)
+    return convert_policy_to_color(self._h_policy)
 
   def get_w_color(self):
-    return convert_policy_to_color(self.w_policy)
+    return convert_policy_to_color(self._w_policy)
 
   def clone(self):
     return Cell(
-      self.top,
-      self.left,
-      self.width,
-      self.w_policy,
-      self.height,
-      self.h_policy,
-      self.name
+      self._top,
+      self._left,
+      self._width,
+      self._w_policy,
+      self._height,
+      self._h_policy,
+      self._name
     )
 
   name=property(get_name)
@@ -77,7 +75,3 @@ class Cell:
   h_policy=property(get_h_policy)
   w_policy=property(get_w_policy)
 
-  def print(self):
-    print('Starting Point', self.top, self.left,
-      'Width and Policy',self.width, self.w_policy, self.height, self.h_policy, 
-      'Name', self.name)

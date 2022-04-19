@@ -1,37 +1,34 @@
 from helpers.cell import Cell
-
-# Layout upper and lover bounds.
-MIN_HEIGHT = 0
-MAX_WIDTH = 2^24
-MAX_HEIGHT = 2^24
+from helpers.dimensions import get_dimensions, MIN_WIDTH, MIN_HEIGHT, MAX_WIDTH, MAX_HEIGHT
 
 SOURCE = {
   'WEST': 'west',
   'SOUTH':'south'
 }
-
 # Derived from Cell.
 # Used to keep track of the neighbouting nodes and current width of the cell.
 class Node:
   def __init__(self, cell):
     self.cell = cell
-    self.east = []
-    self.south = []
+    self._east = []
+    self._width = cell.get_width()
+    self._height = cell.get_height()
 
+  # Returns a list of all the nodes touching the east side of the node
   def get_east(self):
-    return self.east.copy()
+    return self._east
 
-  def set_east(self, new_east):
-    self.east = new_east
+  def append_east(self, node):
+    self._east.append(node)
 
-  def get_south(self):
-    return self.south.copy()
+  def get_width(self):
+    return int(self._width)
 
-  def set_south(self, new_south):
-    self.south = new_south
+  def set_width(self, width):
+    self._width = width
 
-  south=property(get_south, set_south)
-  east=property(get_east, set_east)
+  def get_height(self):
+    return int(self._height)
 
 # Used to keep track of the relationships between Nodes (derived from cells)
 class Graph:
@@ -39,53 +36,43 @@ class Graph:
     self.nodes = []
     for cell in cells:
       self.nodes.append(Node(cell))
-    size = self.current_size()
-    self.horizontal_source = Node(
-      Cell(0, 0, 0, 'fixed', size['current_height'], 'fixed', 'WEST'))
+    self.horizontal_source = Node(Cell(0, 0, 0, 'fixed', MAX_HEIGHT, 'fixed', 'WEST'))
     self.build_horizontal_graph(self.horizontal_source)
-    self.vertical_source = Node(
-      Cell(0, 0, 0, 'fixed', size['current_height'], 'fixed', 'SOUTH'))
-    self.build_vertical_graph(self.vertical_source)
+    # self.vertical_source = Node(
+    #   Cell(0, 0, MAX_WIDTH, 'fixed', 0, 'fixed', 'SOUTH'))
 
   def build_horizontal_graph(self, current_node):
-    for node in self.nodes:
-      if(current_node.get_right == node.get_left):
-        current_node.east.append(node)
-    if(node.east == []):
+    for other_node in self.nodes:
+      if((current_node.cell.get_name() != other_node.cell.get_name()) &
+          (current_node.cell.get_right() == other_node.cell.get_left())):
+        current_node.append_east(other_node)
+    if(current_node.get_east() == []):
       return
     else:
-      for east in self.current_node.get_east():
+      for east in current_node.get_east():
         self.build_horizontal_graph(east)
-      return
-
-  def build_vertical_graph(self, current_node):
-    for node in self.nodes:
-      if(current_node.get_bottom == node.get_top):
-        current_node.south.append(node)
-    if(node.south == []):
-      return
-    else:
-      for south in self.current_node.get_south():
-        self.build_horizontal_graph(south)
       return
 
   def is_horizontal_1D(self):
     current_node = self.horizontal_source
-    while current_node.east != []:
-      if(current_node.east > 1):
+    while(current_node.get_east() != []):
+      if(len(current_node.get_east()) > 1):
         return False
+      current_node = current_node.get_east()[0]
     return True
 
-  def is_vertical_1D(self):
-    current_node = self.vertical_source
-    while current_node.south != []:
-      if(current_node.south > 1):
-        return False
-    return True
+  # This is a function used for debugging
+  def traverse_west_to_east(self):
+    current_node = self.horizontal_source
+    while(current_node != None):
+      if(current_node.get_east() != []):
+        current_node = current_node.get_east()[0]
+      else:
+        current_node = None
 
-  def is_horizontal_of_vertical(self):
-    if self.is_horizontal_1D():
-      return 'Horizontal'
-    if self.is_horizontal_1D():
-      return 'Vertical'
-    return None
+  # Get the horizontal source
+  def get_horizontal_source(self):
+    return self.horizontal_source
+
+  def clone(self):
+    return Graph(self.cells)

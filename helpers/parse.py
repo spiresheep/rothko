@@ -3,7 +3,6 @@ from helpers.cell import Cell
 
 # Function that parses the layout configuration file and returns a list of cells.
 def parse(file_name):
-  print('Start parse');
   file = open(file_name, 'r')
   pre_json = file.read()
   pre_json = '{"cells":[' + pre_json + ']}'
@@ -30,5 +29,5 @@ def parse(file_name):
       name
     )
     cells.append(newCell)
-  print("Done parse")
   return cells
+
