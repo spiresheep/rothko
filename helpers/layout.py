@@ -1,4 +1,3 @@
-from threading import currentThread
 from helpers.graph import Graph
 from helpers.cell import Cell
 from helpers.dimensions import get_dimensions, get_dimensions_from_graph
@@ -33,7 +32,7 @@ class Layout:
     self.graph = Graph(cells)
     self.graph.traverse_west_to_east()
     self._classification = self._determine_classification()
-    self.determine_bounds()
+    self.determine_bounds(cells)
 
   # Helper function that computes the type of layout
   def _determine_classification(self):
@@ -51,16 +50,10 @@ class Layout:
   def get_classification(self):
     return self._classification
 
-  def determine_bounds(self):
+  def determine_bounds(self, cells):
     match self._classification:
       case LayoutClassification.STATIC:
-        bounds = get_dimensions(self.cells)
-        canvas_width = bounds[0]
-        canvas_height = bounds[1]
-        self.min_width = canvas_width
-        self.max_width = canvas_width
-        self.min_height = canvas_height
-        self.max_height = canvas_height
+        return # TODO - Fix
       case LayoutClassification.SINGLE_CELL:
         raise Exception('Not implimented')
       case LayoutClassification.HORIZONTAL_1D:
