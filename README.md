@@ -1,15 +1,22 @@
 # rothko - Last updated April 19, 2022
+
 A layout system for verifying and generating beautiful layouts.
 
 ## To run dev build
 1. Install Python 3.
 2. Install PySimpleGUI using the command `pip3 install pysimplegui`
-3. CD into the directory
-	@@ -14,19 +14,30 @@ A layout system for verifying and generating beautiful layouts.
+3. Install SymPy using the command `pip3 install pysimplegui`
+4. `cd` into the directory
+5. To run the code type `python3 rothko.py`
+
+## To build app for MacOS
+1. `pyinstaller --onefile --windowed --osx-bundle-identifier com.github.spiresheep --icon icon.icns --name RothkoViewer rothko.py`
+2. Then make the resulting files executable
+
 ## To build app for Windows
 1. `pyinstaller --onefile --windowed --icon icon.ico --name RothkoViewer rothko.py`
 
-## Config File Notes
+## Config File Notes/Rules
 
 Reserved names: EAST, WEST, NORTH, SOUTH
 
@@ -31,8 +38,6 @@ It also breaks when the text is much wider than the cell it's in.
 
 Solid colored sqaures blend into each other.
 
-It expects NO OVERLAP.
 
 ## TODO - Boring Super Secret Dev Notes
-1. Live/Hot update
-2. Cell Editor (?)
+1. Cell Editor

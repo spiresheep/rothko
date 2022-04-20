@@ -1,4 +1,5 @@
 import os
+from turtle import update
 import PySimpleGUI as sg
 from helpers.graph import Graph, Node
 from helpers.colors import colors
@@ -290,10 +291,9 @@ if __name__ == "__main__":
         layout_size = get_dimensions(cells_to_draw)
         canvas_resize(window1, layout_size['width'], layout_size['height'])
         draw(window['canvas'], cells_to_draw)
-        if(window2 == None):
-          window2 = render_edit_window(layout_size['width'], layout_size['height'])
-        else:
-          print('TODO - Update edit window values')
+        if(window2 != None):
+          window2.close()
+        window2 = render_edit_window(layout_size['width'], layout_size['height'])
       except:
         cells_to_draw = []
         sg.PopupError('Unable to read config file.')
