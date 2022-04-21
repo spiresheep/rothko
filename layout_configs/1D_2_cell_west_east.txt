@@ -1,14 +1,18 @@
 {
-  name: "A",
-  horizontal: "100 adaptable",
-  vertical: "100 fixed",
-  top: 0,
-  left: 0
-},
-{
-  name: "B",
-  horizontal: "100 fixed",
-  vertical: "100 fixed",
-  top: 0,
-  left: 100
+  "cells": [
+    {
+      "name": "A",
+      "horizontal": "100 adaptable",
+      "vertical": "100 fixed",
+      "top": 0,
+      "left": 0
+    },
+    {
+      "name": "B",
+      "horizontal": "100 fixed",
+      "vertical": "100 fixed",
+      "top": 0,
+      "left": 100
+    }
+ ]
 }
