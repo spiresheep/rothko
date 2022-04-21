@@ -1,7 +1,7 @@
 import json
 from helpers.cell import Cell
 
-# Function that parses the layout configuration file and returns a list of cells.
+# Legacy Code
 def parse(file_name):
   file = open(file_name, 'r')
   pre_json = file.read()
@@ -13,7 +13,8 @@ def parse(file_name):
   pre_json = pre_json.replace('left:', '"left":')
   local = json.loads(pre_json)
   cells = []
-  for cell in local['cells']:
+  for cell in local["cells"]:
+    print(cell)
     splitH = cell["horizontal"].split(" ")
     splitV = cell["vertical"].split(" ")
     name = ""
@@ -29,5 +30,6 @@ def parse(file_name):
       name
     )
     cells.append(newCell)
+  # TODO - Parse Constraints
   return cells
 

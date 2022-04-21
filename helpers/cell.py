@@ -74,4 +74,3 @@ class Cell:
   height=property(get_height)
   h_policy=property(get_h_policy)
   w_policy=property(get_w_policy)
-

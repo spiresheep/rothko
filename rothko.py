@@ -5,7 +5,7 @@ from helpers.graph import Graph, Node
 from helpers.colors import colors
 from helpers.dimensions import get_dimensions, get_dimensions_from_graph
 from helpers.layout import Layout, LayoutClassification
-from helpers.parse import parse
+from helpers.parse_from_json import parse
 
 OUTLINE_WIDTH = 1
 BORDER_SIZE = 2
@@ -100,7 +100,37 @@ def draw(canvas, cells_to_draw):
           top, right - outline_width,
           bottom - outline_width
         )
-      # #draw yellow lines
+      #draw green lines
+      print('yo')
+      if height_color == colors['green']:
+        draw_outlined_rect( #north line
+          canvas, outline_width, colors['green'],
+          left, 
+          top,
+          right - outline_width,
+          top + border_size + outline_width
+        )
+        draw_outlined_rect(# south line
+          canvas, outline_width, colors['green'],
+          left,
+          bottom - border_size - (2 * outline_width),
+          right - outline_width,
+          bottom - outline_width #double check correctness
+        )
+      if width_color == colors['green']:
+        draw_outlined_rect(#west line
+          canvas, outline_width, colors['green'],
+          left,
+          top,
+          left + border_size + outline_width, bottom - outline_width
+        )
+        draw_outlined_rect(#east line
+          canvas, outline_width, colors['green'],
+          right - border_size - (2 * outline_width),
+          top, right - outline_width,
+          bottom - outline_width
+        )
+    # #draw yellow lines
       if height_color == colors['yellow']:
         draw_outlined_rect(#north line
           canvas, outline_width, colors['yellow'],
@@ -141,16 +171,11 @@ def draw(canvas, cells_to_draw):
         fill='black'
       )
 
-def draw_node(node):
-  raise Exception('Not implimented')
-
 def redraw_from_graph(window, layout: Layout):
-
   graph = layout.graph
   if(layout._classification == LayoutClassification.HORIZONTAL_1D):
     canvas = window['canvas']
     canvas_size = get_dimensions_from_graph(graph)
-
     canvas.TKCanvas.configure(width=canvas_size['width'], height=canvas_size['height'])
     current_node = graph.get_horizontal_source()
     current_x = 0
@@ -166,6 +191,7 @@ def redraw_from_graph(window, layout: Layout):
     raise Exception('Format not supported')
 
 def draw_node(canvas, x, y, node: Node):
+  print('draw nodes')
   top = y
   left = x
   bottom = y + node.get_height()
@@ -189,7 +215,7 @@ def draw_node(canvas, x, y, node: Node):
       outline='',
       width=0
     )
-      #draw blue lines
+    #draw blue lines
     if node.cell.get_h_color() == colors['blue']:
       draw_outlined_rect( #north line
         canvas, OUTLINE_WIDTH, colors['blue'],
@@ -218,7 +244,38 @@ def draw_node(canvas, x, y, node: Node):
         top, right - OUTLINE_WIDTH,
         bottom - OUTLINE_WIDTH
       )
-    # #draw yellow lines
+    #draw green lines
+    if node.cell.get_h_color() == colors['green']:
+      print('draw green')
+      draw_outlined_rect( #north line
+        canvas, OUTLINE_WIDTH, colors['green'],
+        left, 
+        top,
+        right - OUTLINE_WIDTH,
+        top + BORDER_SIZE + OUTLINE_WIDTH
+      )
+      draw_outlined_rect(# south line
+        canvas, OUTLINE_WIDTH, colors['green'],
+        left,
+        bottom - BORDER_SIZE - (2 * OUTLINE_WIDTH),
+        right - OUTLINE_WIDTH,
+        bottom - OUTLINE_WIDTH #double check correctness
+      )
+    if node.cell.get_w_color() == colors['green']:
+      print('draw green')
+      draw_outlined_rect(#west line
+        canvas, OUTLINE_WIDTH, colors['green'],
+        left,
+        top,
+        left + BORDER_SIZE + OUTLINE_WIDTH, bottom - OUTLINE_WIDTH
+      )
+      draw_outlined_rect(#east line
+        canvas, OUTLINE_WIDTH, colors['green'],
+        right - BORDER_SIZE - (2 * OUTLINE_WIDTH),
+        top, right - OUTLINE_WIDTH,
+        bottom - OUTLINE_WIDTH
+      )
+    #draw yellow lines
     if node.cell.get_h_color() == colors['yellow']:
       draw_outlined_rect(#north line
         canvas, OUTLINE_WIDTH, colors['yellow'],
@@ -285,18 +342,18 @@ if __name__ == "__main__":
     if event == 'LOAD LAYOUT':
       source_file = values['-sourcefile-']
       source_path, source_filename = os.path.split(source_file)
-      try:
-        cells_to_draw = parse(source_file)
-        layout = Layout(cells_to_draw)
-        layout_size = get_dimensions(cells_to_draw)
-        canvas_resize(window1, layout_size['width'], layout_size['height'])
-        draw(window['canvas'], cells_to_draw)
-        if(window2 != None):
-          window2.close()
-        window2 = render_edit_window(layout_size['width'], layout_size['height'])
-      except:
-        cells_to_draw = []
-        sg.PopupError('Unable to read config file.')
+      # try:
+      cells_to_draw = parse(source_file)
+      layout = Layout(cells_to_draw)
+      layout_size = get_dimensions(cells_to_draw)
+      canvas_resize(window1, layout_size['width'], layout_size['height'])
+      draw(window['canvas'], cells_to_draw)
+      if(window2 != None):
+        window2.close()
+      window2 = render_edit_window(layout_size['width'], layout_size['height'])
+      # except:
+      #   cells_to_draw = []
+      #   sg.PopupError('Unable to read config file.')
     if event == 'UPDATE PREVIEW':
       if(layout.get_classification() == LayoutClassification.STATIC):
         new_height = values['HEIGHT']
