@@ -1,4 +1,7 @@
+import ast
 import sympy
+from helpers.cell import Cell
+from helpers.layout import Layout, LayoutClassification
 
 # A class that is a hybrid between Cell and Node used to experiment with
 class Cell_Node:
@@ -17,16 +20,8 @@ def solve_constraints(equations: list):
 def sympy_hello_world():
   x = sympy.Symbol('x') 
   y = sympy.Symbol('y') 
-  expr = (x + 2) * (x-2) * (y +2)
+  expr = sympy.Eq((x + 2) * (x-2) * (y +2), 0)
   print(f'hello world result {sympy.solve(expr)}')
-
-def chaos():
-  x = sympy.Symbol('x') 
-  y = sympy.Symbol('y') 
-  expr = (x + 2) * (x-2) * (y +2)
-  print('expr type', type(expr))
-  eq = sympy.Eq(expr, 0)
-  print(f'hello world result {sympy.solve(eq)}')
 
 def sympy_two_unknowns():
   x, y = sympy.symbols('x y')
@@ -36,19 +31,26 @@ def sympy_two_unknowns():
   print(f'x = {sol_dict[x]}')
   print(f'y = {sol_dict[y]}')
 
+def sympy_string_to_solved():
+  print('~ Start String demo ~')
+  #cell_width, canvas_width = sympy.symbols('cell_width canvas_width')
+  raw_constraint = 'cell_width = canvas_width / 2'
+  split_constraint = raw_constraint.split('=')
+  right_side = sympy.sympify(split_constraint[1])
+  expression = sympy.sympify('canvas_width', 100)
+  print('solution', right_side, type(right_side))
+  print('~ End String demo ~')
+
+
 def sympy_proof_of_concept():
-  cells = [
-    Cell(0, 0, 100, 'adaptable', 100, 'fixed', 'A_Cell'),
-    Cell(0, 100, 100, 'fixed', 100, 'fixed', 'B_Cell')
-  ]
+  # cells = [
+  #   Cell(0, 0, 100, 'adaptable', 100, 'fixed', 'A_Cell'),
+  #   Cell(0, 100, 100, 'fixed', 100, 'fixed', 'B_Cell')
+  # ]
   # layout = Layout(cells)
-  # raw_constraints = "A_Cell.width = Canvas.width / 2"
-  # parsed_constraints = []
-  # # ????
-  # Profit
+  # raw_constraint = 'A_Cell.width = Canvas.width / 2'
+  # MAKE AST for each constraint/operation (???)
   raise Exception('Uh, you didn\'t implement anything')
 
 if __name__ == "__main__":
-  # sympy_hello_world()
-  # sympy_two_unknowns()
-  chaos()
+  sympy_string_to_solved()
