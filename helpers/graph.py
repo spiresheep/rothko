@@ -5,6 +5,7 @@ SOURCE = {
   'WEST': 'west',
   'SOUTH':'south'
 }
+
 # Derived from Cell.
 # Used to keep track of the neighbouting nodes and current width of the cell.
 class Node:

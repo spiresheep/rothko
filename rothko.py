@@ -3,7 +3,7 @@ from turtle import update
 import PySimpleGUI as sg
 from helpers.graph import Graph, Node
 from helpers.colors import colors
-from helpers.dimensions import get_dimensions, get_dimensions_from_graph
+from helpers.dimensions import MAX_HEIGHT, MAX_WIDTH, get_dimensions, get_dimensions_from_graph
 from helpers.layout import Layout, LayoutClassification
 from helpers.parse_from_json import parse
 
@@ -101,7 +101,6 @@ def draw(canvas, cells_to_draw):
           bottom - outline_width
         )
       #draw green lines
-      print('yo')
       if height_color == colors['green']:
         draw_outlined_rect( #north line
           canvas, outline_width, colors['green'],
@@ -191,7 +190,6 @@ def redraw_from_graph(window, layout: Layout):
     raise Exception('Format not supported')
 
 def draw_node(canvas, x, y, node: Node):
-  print('draw nodes')
   top = y
   left = x
   bottom = y + node.get_height()
@@ -246,7 +244,6 @@ def draw_node(canvas, x, y, node: Node):
       )
     #draw green lines
     if node.cell.get_h_color() == colors['green']:
-      print('draw green')
       draw_outlined_rect( #north line
         canvas, OUTLINE_WIDTH, colors['green'],
         left, 
@@ -262,7 +259,6 @@ def draw_node(canvas, x, y, node: Node):
         bottom - OUTLINE_WIDTH #double check correctness
       )
     if node.cell.get_w_color() == colors['green']:
-      print('draw green')
       draw_outlined_rect(#west line
         canvas, OUTLINE_WIDTH, colors['green'],
         left,
@@ -327,7 +323,7 @@ def render_layout_preview():
     [sg.Text('Source Layout File'), sg.Input(key='-sourcefile-', size=(45, 1)),
       sg.FileBrowse()],
     [sg.Button('LOAD LAYOUT', bind_return_key=True)],
-    [sg.Text('Max_X: 0, Max_X: 2^24, Min_Y: 0, Max_Y: 2^24')],
+    [sg.Text(f'Max_X: 0, Max_X: {MAX_WIDTH}, Min_Y: 0, Max_Y: {MAX_HEIGHT}')],
     [sg.Canvas(size=(600, 100), background_color='black', key= 'canvas')]
   ]
   return sg.Window('Layout Viewer', layout, finalize=True)

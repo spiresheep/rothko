@@ -25,14 +25,14 @@ class Layout:
     self.max_width = canvas_width
     self.min_height = canvas_height
     self.max_height = canvas_height
-    # Generate some extra data about the layout - immutable properties - to cut
-    # down on repetitive work.
-    self.horizontal = None
-    self.vertical = None
     self.graph = Graph(cells)
     self.graph.traverse_west_to_east()
+    # Generate some extra data about the layout - immutable properties - to cut
+    # down on repetitive work.
     self._classification = self._determine_classification()
-    self.determine_bounds(cells)
+    new_bounds = self.determine_bounds()
+    self.min_width = new_bounds['min_width']
+    self.max_width = new_bounds['max_width']
 
   # Helper function that computes the type of layout
   def _determine_classification(self):
@@ -50,10 +50,10 @@ class Layout:
   def get_classification(self):
     return self._classification
 
-  def determine_bounds(self, cells):
+  def determine_bounds(self):
     match self._classification:
       case LayoutClassification.STATIC:
-        return # TODO - Fix
+        return # TODO - Implement
       case LayoutClassification.SINGLE_CELL:
         raise Exception('Not implimented')
       case LayoutClassification.HORIZONTAL_1D:
@@ -70,10 +70,12 @@ class Layout:
             current_node = current_node.get_east()[0]
           else:
             current_node = None
-        self.min_width = min_width
-        self.max_width = max_width
+        # self.min_width = min_width
+        # self.max_width = max_width
+        print('bounds', 'min_width', min_width, 'max_width', max_width)
+        return {'min_width': min_width, 'max_width': max_width}
       case LayoutClassification.VERTICAL_1D:
-        raise Exception('Not implimented')
+        return # TODO - Implement
 
   def resize_layout(self, new_width, new_height):
     if(new_width < self.min_width):

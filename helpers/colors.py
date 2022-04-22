@@ -14,7 +14,6 @@ def convert_policy_to_color(policy):
   if(policy == 'adaptable'):
     return colors['blue']
   if(policy == 'constrained'):
-    print('IZ GREEN')
     return colors['green']
   else:
     return colors['error']
