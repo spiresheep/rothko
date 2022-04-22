@@ -14,14 +14,12 @@ class Cell:
   def get_name(self):
     return self._name;
 
-  # Document
   def get_top(self):
     return self._top;
 
   def set_top(self, top):
     self._top = top
 
-  # Document
   def get_left(self):
     return self._left
 

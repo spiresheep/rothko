@@ -2,7 +2,7 @@
   "cells": [
     {
       "name": "A",
-      "horizontal": "100 adaptable",
+      "horizontal": "100 fixed",
       "vertical": "100 fixed",
       "top": 0,
       "left": 0
@@ -16,17 +16,10 @@
     },
     {
       "name": "C",
-      "horizontal": "100 adaptable",
-      "vertical": "100 fixed",
-      "top": 0,
-      "left": 200
-    },
-    {
-      "name": "D",
       "horizontal": "100 fixed",
       "vertical": "100 fixed",
       "top": 0,
-      "left": 300
+      "left": 200
     }
   ]
 }
