@@ -1,8 +1,8 @@
+from enum import Enum
 from helpers.graph import Graph
 from helpers.cell import Cell
 from helpers.dimensions import get_dimensions, get_dimensions_from_graph
 from helpers.dimensions import MIN_WIDTH, MIN_HEIGHT, MAX_WIDTH, MAX_HEIGHT
-from enum import Enum
 
 # Categorization of layouts to make it easier to reason about them
 class LayoutClassification(Enum):
@@ -63,8 +63,12 @@ class Layout:
         while(current_node != None):
           if(current_node.cell.get_w_policy() == 'fixed'):
             min_width = min_width + current_node.cell.width
+            if(max_width != MAX_WIDTH):
+              max_width = max_width + current_node.cell.width
           elif(current_node.cell.get_w_policy() == 'adaptable'):
             max_width = MAX_WIDTH
+          elif(current_node.cell.get_w_policy() == 'constrained'):
+            print('Constrainted node, not used for min/max width')
           #get the next node :D
           if(current_node.get_east() != []):
             current_node = current_node.get_east()[0]
@@ -113,3 +117,6 @@ class Layout:
       return
     for node in nodes_to_resize:
       node.set_width(node.get_width() + difference)
+
+  def find_node(self, name):
+    self.graph.fineName(name)

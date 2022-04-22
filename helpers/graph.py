@@ -7,7 +7,7 @@ SOURCE = {
 }
 
 # Derived from Cell.
-# Used to keep track of the neighbouting nodes and current width of the cell.
+# Used to keep track of the neighboring nodes and current width of the cell.
 class Node:
   def __init__(self, cell):
     self.cell = cell
@@ -74,6 +74,14 @@ class Graph:
   # Get the horizontal source
   def get_horizontal_source(self):
     return self.horizontal_source
+
+  # Returns None if no such node exists
+  def find_node(self, name):
+    result = None
+    for node in self.nodes:
+      if(node.cell.get_name() == name):
+        return node
+    return result
 
   def clone(self):
     return Graph(self.cells)

@@ -1,5 +1,4 @@
 import os
-from turtle import update
 import PySimpleGUI as sg
 from helpers.graph import Graph, Node
 from helpers.colors import colors
@@ -338,7 +337,6 @@ if __name__ == "__main__":
     if event == 'LOAD LAYOUT':
       source_file = values['-sourcefile-']
       source_path, source_filename = os.path.split(source_file)
-      # try:
       cells_to_draw = parse(source_file)
       layout = Layout(cells_to_draw)
       layout_size = get_dimensions(cells_to_draw)
@@ -347,9 +345,6 @@ if __name__ == "__main__":
       if(window2 != None):
         window2.close()
       window2 = render_edit_window(layout_size['width'], layout_size['height'])
-      # except:
-      #   cells_to_draw = []
-      #   sg.PopupError('Unable to read config file.')
     if event == 'UPDATE PREVIEW':
       if(layout.get_classification() == LayoutClassification.STATIC):
         new_height = values['HEIGHT']
