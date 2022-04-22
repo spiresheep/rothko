@@ -69,11 +69,14 @@ def _proof_of_concept_2_parse_and_solve():
 
 
 def _proof_of_concept_3():
-  c_1 = 'canvas_width = '
-  c_2 = 'B_width = 50'
-  c_3 = 'canvas_leftovers = canvas_width - B_width' #how to compose
-  c_4 = 'A_width = canvas_leftovers / 1'
-  constraint_list = [c_1, c_2, c_3, c_4]
+  c_1 = 'C_width = 100'
+  c_2 = 'B_width = canvas_width / 2'
+  c_3 = 'A_width = canvas_width - B_width - C_width - D_width'
+  c_4 = 'D_width = canvas_width - B_width - C_width - A_width'
+  c_5 = 'A_width = D_width'
+  c_6 = 'canvas_width = A_width + B_width + C_width + D_width'
+  c_7 = 'D_width = 0'
+  constraint_list = [c_1, c_6, c_5, c_2,c_3, c_4]
   parsed_constraints = []
   for constraint in constraint_list:
     parsed_constraints.append(Constraint(constraint))
@@ -83,8 +86,8 @@ def _proof_of_concept_3():
   for constraint in parsed_constraints:
     symbols_list.append(constraint.get_symbol())
     f_list.append(constraint.get_equation())
-  solution = sympy.solve(f_list, symbols_list) 
-  print('solution for widths', solution)
+  solution = sympy.solve(f_list, symbols_list)
+  print('solution for stuff', solution)
 
 def _proof_of_concept_2_solve_canvas_size():
   c_2 = 'B_width = 50'
@@ -135,7 +138,7 @@ if __name__ == "__main__":
   x = 2 
   expr = x + 1
   print(expr)
-  _proof_of_concept_2_parse_and_solve()
+  _proof_of_concept_3()
   _proof_of_concept_2_solve_canvas_size()
 
 
