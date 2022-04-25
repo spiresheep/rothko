@@ -89,6 +89,7 @@ def coworker_hint():
   eq5 = sympy.Equality(w, a + b + c + d + e + f)
   eq6 = sympy.Equality(w, 1000)
   #interate over all the undefined ones and make them equal each other!
+  eq7 = sympy.Equality(c, f)
   print(sympy.solve((eq1, eq2, eq3, eq4, eq5, eq6), (a, b, c, d, e, f, w)))
 
 def _proof_of_concept_2_parse_and_solve():
