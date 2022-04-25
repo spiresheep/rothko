@@ -30,9 +30,9 @@ class Layout:
     # Generate some extra data about the layout - immutable properties - to cut
     # down on repetitive work.
     self._classification = self._determine_classification()
-    new_bounds = self.determine_bounds()
-    self.min_width = new_bounds['min_width']
-    self.max_width = new_bounds['max_width']
+    # new_bounds = self.determine_bounds()
+    # #self.min_width = new_bounds['min_width']
+    # #self.max_width = new_bounds['max_width']
 
   # Helper function that computes the type of layout
   def _determine_classification(self):
