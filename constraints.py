@@ -333,7 +333,7 @@ def _proof_of_concept_constraints_from_cells_MULTIPLE_adaptable():
   print('Maximum Solution', solution)
 
 
-def _proof_of_concept_constraints_from_cells_MULTIPLE_CELLS(): #!WIP
+def _proof_of_concept_constraints_from_cells_MULTIPLE_CELLS():
   demo_cells = [
     Cell(0, 0, 100, 'fixed', 100, 'fixed', 'B'),
     Cell(0, 100, 100, 'adaptable', 100, 'adaptable', 'A'),
