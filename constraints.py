@@ -136,15 +136,18 @@ def parse_constraints(list_of_constraint_strings):
 def _proof_of_concept_constraints_from_cells_adaptable(): #!WIP
   demo_cells = [
     Cell(0, 0, 100, 'fixed', 100, 'fixed', 'A'),
-    Cell(0, 0, 100, 'adaptable', 100, 'adaptable', 'B'),
+    Cell(0, 100, 100, 'adaptable', 100, 'adaptable', 'B'),
   ]
   layout = Layout(demo_cells)
-  base_constraints = [f'MAX_WIDTH = {MAX_WIDTH}', f'MAX_WIDTH = {MIN_WIDTH}']
+  base_constraints = [] #[f'MAX_WIDTH = {MAX_WIDTH}', f'MAX_WIDTH = {MIN_WIDTH}']
+
   fixed_constraints = []
-  current_node = layout.graph.get_horizontal_source()
-  # Get constraints from fixed cells
   names_of_adaptable_cells = []
+  current_node = layout.graph.get_horizontal_source()
+
+  # Get constraints from fixed cells and adaptable cells
   while (current_node != None):
+    print('current_node', current_node.cell.get_name())
     if (current_node.cell.w_policy == 'fixed') & (current_node.cell.name != 'WEST'):
       fixed_constraints.append(f'{current_node.cell.name}_width = {current_node.cell.width}')
     elif current_node.cell.w_policy == 'adaptable':
@@ -153,16 +156,17 @@ def _proof_of_concept_constraints_from_cells_adaptable(): #!WIP
       current_node = current_node.get_east()[0]
     else:
       current_node = None
+  
   adaptable_constrains = []
   if(len(names_of_adaptable_cells) == 1):
     cell_name = names_of_adaptable_cells[0]
-    adaptable_constrains.append(f'{cell_name} = {cell_name}')
+    adaptable_constrains.append(f'{cell_name}_width = 0')
   elif(len(names_of_adaptable_cells) > 1):
     first_cell_name = names_of_adaptable_cells[0]
     for other_cell in names_of_adaptable_cells:
-      adaptable_constrains.append(f'{first_cell_name} = {other_cell}')
+      adaptable_constrains.append(f'{first_cell_name}_width = {other_cell}_width')
+    print(adaptable_constrains)
   full_constraint_list = base_constraints + fixed_constraints + adaptable_constrains
-  # Prase the constaints
   parsed_constraints = []
   for constraint in full_constraint_list:
     parsed_constraints.append(Constraint(constraint)) #!!!!
@@ -174,7 +178,7 @@ def _proof_of_concept_constraints_from_cells_adaptable(): #!WIP
         rhs = rhs + '+' + str(constraint.get_symbol())
       else:
         rhs = str(constraint.get_symbol())
-  width_constraint = f'canavs_width = {rhs}'
+  width_constraint = f'canvas_width = {rhs}'
   parsed_constraints.append(Constraint(width_constraint))
   # Minimized adaptable cells
 
@@ -189,14 +193,16 @@ def _proof_of_concept_constraints_from_cells_adaptable(): #!WIP
     symbols_list.append(constraint.get_symbol())
     f_list.append(constraint.get_equation())
   solution = sympy.solve(f_list, symbols_list)
+  print('flist', f_list)
+  print('symbols_list', symbols_list)
   print('solution', solution)
 
 
 if __name__ == "__main__":
   print('~~Start Test~~')
-  _proof_of_concept_parse_and_solve_single_fixed()
-  _proof_of_concept_parse_and_solve_single_adaptable()
-  _proof_of_concept_constraints_from_cells_fixed()
+  #_proof_of_concept_parse_and_solve_single_fixed()
+  #_proof_of_concept_parse_and_solve_single_adaptable()
+  #_proof_of_concept_constraints_from_cells_fixed()
   print('~~Adaptable Cell Demo~~')
   _proof_of_concept_constraints_from_cells_adaptable()
   print('~~End Test~~')
