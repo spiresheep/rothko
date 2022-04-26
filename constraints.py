@@ -1,5 +1,6 @@
 from ast import Expression
 from logging.handlers import SysLogHandler
+from re import M
 import sympy
 from enum import Enum
 from helpers.cell import Cell
@@ -70,6 +71,15 @@ def solve_min_max_fixed():
   max = sympy.maximum(function, x, sympy.Interval(MIN_WIDTH, MAX_WIDTH))
   print('Min', min, 'Max', max)
 
+def solve_min_max_adaptable():
+  print('~~~Current Test~~')
+  x, function = sympy.symbols('x function')
+  function =  (x) * (100 - x)
+  print(function)
+  min = sympy.minimum(function, x, sympy.Interval(MIN_WIDTH, MAX_WIDTH))
+  max = sympy.maximum(function, x, sympy.Interval(MIN_WIDTH, MAX_WIDTH))
+  print('Min', min, 'Max', max)
+
 # Sympy claims'multivariate polynomials are not supported'
 def _solve_min_max_adaptable():
   print('~~~Current Test~~')
@@ -87,16 +97,47 @@ def coworker_hint():
   eq3 = sympy.Equality(b, 100) #fixed
   eq4 = sympy.Equality(d, 200) #fixed
   eq5 = sympy.Equality(w, a + b + c + d + e + f)
-  eq6 = sympy.Equality(w, 1000)
+  eq6 = sympy.Equality(w, 10000)
   #interate over all the undefined ones and make them equal each other!
   eq7 = sympy.Equality(c, f)
-  print(sympy.solve((eq1, eq2, eq3, eq4, eq5, eq6), (a, b, c, d, e, f, w)))
+  print(sympy.solve((eq1, eq2, eq3, eq4, eq5, eq6, eq7), (a, b, c, d, e, f, w)))
+
+def get_min_and_max():
+  a, b, c, d, e, f, w = sympy.symbols('a, b, c, d, e, f, w')
+  eq1 = sympy.Equality(a, b * 2)
+  eq2 = sympy.Equality(e, a + c)
+  eq3 = sympy.Equality(b, 100) #fixed
+  eq4 = sympy.Equality(d, 200) #fixed
+  eq5 = sympy.Equality(w, a + b + c + d + e + f)
+  eq6 = sympy.Equality(c, f)
+  # Minimize the leftovers to get min!
+  eq7 = sympy.Equality(c, 0)
+  print('The layout min is...' , sympy.solve((eq1, eq2, eq3, eq4, eq5, eq6, eq7), (a, b, c, d, e, f, w))[w])
+  # Now to get max!? This doesn't seem right....
+  eq7 = sympy.Equality(c, MAX_HEIGHT - a - b - d - e - f)
+  print('The layout max is...' , sympy.solve((eq1, eq2, eq3, eq4, eq5, eq6, eq7), (a, b, c, d, e, f, w))[w])
+
+def get_min_and_max_2():
+  a, b, c, d, e, f, g, w = sympy.symbols('a, b, c, d, e, f, g, w')
+  eq1 = sympy.Equality(a, b * 2)
+  eq2 = sympy.Equality(e, a + c)
+  eq3 = sympy.Equality(b, 100) #fixed
+  eq4 = sympy.Equality(d, 200) #fixed
+  eq5 = sympy.Equality(w, a + b + c + d + e + f + g)
+  eq6 = sympy.Equality(c, f)
+  eq8 = sympy.Equality(f, g)
+  # Minimize the leftovers to get min!
+  eq7 = sympy.Equality(c, 0)
+  print('The layout min is...' , sympy.solve((eq1, eq2, eq3, eq4, eq5, eq6, eq7, eq8), (a, b, c, d, e, f,g, w))[w])
+  # Now to get max!?
+  eq7 = sympy.Equality(c, MAX_HEIGHT - a - b - d - e - f - g)
+  print('The layout max is...' , sympy.solve((eq1, eq2, eq3, eq4, eq5, eq6, eq7, eq8), (a, b, c, d, e, f,g, w))[w])
 
 def _proof_of_concept_2_parse_and_solve():
-  c_1 = 'canvas_width = 300'
+  c_1 = 'canvas_width = 0'
   c_2 = 'B_width = 50'
-  c_3 = 'canvas_leftovers = canvas_width - B_width' #how to compose
-  c_4 = 'A_width = canvas_leftovers / 1'
+  c_3 = 'A_width = A_width'
+  c_4 = 'canvas_width = A_width + B_width'
   constraint_list = [c_1, c_2, c_3, c_4]
   parsed_constraints = []
   for constraint in constraint_list:
@@ -110,48 +151,7 @@ def _proof_of_concept_2_parse_and_solve():
   solution = sympy.solve(f_list, symbols_list) 
   print('solution for widths', solution)
 
-
-def _proof_of_concept_3():
-  c_1 = 'C_width = 100'
-  c_2 = 'B_width = canvas_width / 2'
-  c_3 = 'A_width = canvas_width - B_width - C_width - D_width'
-  c_4 = 'D_width = canvas_width - B_width - C_width - A_width'
-  c_5 = 'A_width = D_width'
-  c_6 = 'canvas_width = A_width + B_width + C_width + D_width'
-  c_7 = 'D_width = 0'
-  constraint_list = [c_1, c_6, c_5, c_2,c_3, c_4]
-  parsed_constraints = []
-  for constraint in constraint_list:
-    parsed_constraints.append(Constraint(constraint))
-  #solve
-  symbols_list = []
-  f_list = []
-  for constraint in parsed_constraints:
-    symbols_list.append(constraint.get_symbol())
-    f_list.append(constraint.get_equation())
-  solution = sympy.solve(f_list, symbols_list)
-  print('solution for stuff', solution)
-
-def _proof_of_concept_2_solve_canvas_size():
-  c_2 = 'B_width = 50'
-  c_1 = 'canvas_width = B_width + A_width'
-  c_3 = 'canvas_leftovers = canvas_width - B_width' #how to compose
-  c_4 = 'A_width = canvas_leftovers / 1'
-  c_4 = 'A_width = 200'
-  constraint_list = [c_1, c_2, c_3, c_4]
-  parsed_constraints = []
-  for constraint in constraint_list:
-    parsed_constraints.append(Constraint(constraint))
-  #solve
-  symbols_list = []
-  f_list = []
-  for constraint in parsed_constraints:
-    symbols_list.append(constraint.get_symbol())
-    f_list.append(constraint.get_equation())
-  solution = sympy.solve(f_list, symbols_list) 
-  print('solution for canvas', solution)
-
-def _proof_of_concept_3_constraints_from_cells():
+def _proof_of_concept_3_constraints_from_cells(): #!!!!!!!!!!!!
   print('~~After Example~~')
   demo_cells = [
     Cell(0, 0, 100, 'adaptable', 100, 'fixed', 'A'),
@@ -175,32 +175,13 @@ def _proof_of_concept_3_constraints_from_cells():
   solution = sympy.solve(f_list, symbols_list) 
   print('solution', solution)
 
-def proof_of_concept_with_domtain():
-  c_1 = 'canvas_width = A_width + B_width'
-  c_3 = 'canvas_leftovers = canvas_width - B_width'
-  c_4 = 'A_width = canvas_leftovers / X'
-  c_2 = 'B_width = 50' #because B width is fixed
-
-
-  constraint_list = [c_1, c_2, c_3, c_4]
-  parsed_constraints = []
-  for constraint in constraint_list:
-    parsed_constraints.append(Constraint(constraint))
-  #solve
-  symbols_list = []
-  f_list = []
-  for constraint in parsed_constraints:
-    symbols_list.append(constraint.get_symbol())
-    f_list.append(constraint.get_equation())
-  solution = sympy.solve(f_list, symbols_list) 
-  print('solution', solution)
-
 if __name__ == "__main__":
   print('~~Start Test~~')
   x = sympy.symbols('x')
   x = 2 
   expr = x + 1
   print(expr)
-  _proof_of_concept_max_and_min()
-  solve_min_max_fixed()
   coworker_hint()
+  get_min_and_max()
+  get_min_and_max_2()
+  _proof_of_concept_2_parse_and_solve()

@@ -3,9 +3,9 @@ MIN_WIDTH = 0
 # The lower bound on the canvas height
 MIN_HEIGHT = 0
 # The upper bound on the canvas width
-MAX_WIDTH = 1000 #2^24
+MAX_WIDTH = 6000 #2^24
 # The upper bound on the canvas height
-MAX_HEIGHT = 1000 #2^24
+MAX_HEIGHT = 6000 #2^24
 
 # Determines the size of the canvas required to display the current list of cells
 def get_dimensions(cells):
