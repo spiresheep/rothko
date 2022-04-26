@@ -18,7 +18,7 @@ A layout system for verifying and generating beautiful layouts.
 
 ## Config File Notes/Rules
 
-Reserved names: EAST, WEST, NORTH, SOUTH
+Reserved names: EAST, WEST, NORTH, SOUTH, MAX_WIDTH, MIN_WIDTH, CELL and some number
 
 Each cell should have a unique name.
 

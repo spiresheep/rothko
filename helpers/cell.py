@@ -15,7 +15,7 @@ class Cell:
     return self._name;
 
   def get_top(self):
-    return self._top;
+    return self._top
 
   def set_top(self, top):
     self._top = top
@@ -30,7 +30,7 @@ class Cell:
     return self._width
 
   def get_height(self):
-    return self._height;
+    return self._height
 
   #calculated
   def get_right(self):
