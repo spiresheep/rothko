@@ -1,4 +1,4 @@
-# rothko - Last updated April 19, 2022
+# rothko - Last updated April 27, 2022
 
 A layout system for verifying and generating beautiful layouts.
 
@@ -18,17 +18,15 @@ A layout system for verifying and generating beautiful layouts.
 
 ## Config File Notes/Rules
 
-Reserved names: EAST, WEST, NORTH, SOUTH, MAX_WIDTH, MIN_WIDTH, CELL and some number
+Names that cannot be used for cells:
+  EAST, WEST, NORTH, SOUTH, MAX_WIDTH, MIN_WIDTH, Canvas
 
-Each cell should have a unique name.
+Each cell must have a unique name.
 
-The following words should not be used as cell names: viewport,leftover. They
-have special meaning within the layout and using them may cause undesired behavior.
-
-They are inteded to be used as variables for constraints.
+~~They are to be used as variables for constraints.
 leftover - eg. Leftover/2 - meaning give HALF the ratio to the cell
 viewport - Can be thought of a supercell or superlayout that contains the layout.
-Canvas.width is the width of the viewport. Eg. width = canvas.width / 2
+Canvas.width is the width of the viewport. Eg. width = canvas.width / 2~~
 
 ## Limitations
 The layout breaks when the width is less than or equal the sum of the outline.
@@ -38,6 +36,8 @@ It also breaks when the text is much wider than the cell it's in.
 
 Solid colored sqaures blend into each other.
 
-
 ## TODO - Boring Super Secret Dev Notes
-1. Cell Editor
+1. Add names to cells without names so the app does not crash
+1. Cell/Layout Editor
+2. Improve the layout config file format. Improvements will take the form of
+removing JSON chaff, adding shorthands for all the properties and more.
