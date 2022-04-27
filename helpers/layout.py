@@ -14,7 +14,7 @@ class LayoutClassification(Enum):
 
 # A layout contains all the data needed to display and modify a layout
 class Layout:
-  def __init__(self, cells):
+  def __init__(self, cells, constraints=None):
     self.initial_cells = cells
     # These initial values are not the final values
     # The min and max values might be better defaults.
@@ -27,15 +27,14 @@ class Layout:
     self.max_height = canvas_height
     self.graph = Graph(cells)
     self.graph.traverse_west_to_east()
+    self._constraints = constraints
     # Generate some extra data about the layout - immutable properties - to cut
     # down on repetitive work.
     self._classification = self._determine_classification()
-    # new_bounds = self.determine_bounds()
-    # #self.min_width = new_bounds['min_width']
-    # #self.max_width = new_bounds['max_width']
+
 
   # Helper function that computes the type of layout
-  def _determine_classification(self):
+  def _determine_classification(self): # DONE
     is_horizontal = self.graph.is_horizontal_1D()
     is_vertical = False # TODO - Add test for this
     if(is_horizontal and is_vertical):
@@ -47,57 +46,39 @@ class Layout:
     else:
       return LayoutClassification.STATIC
 
-  def get_classification(self):
+  def get_classification(self): # DONE
     return self._classification
 
   def determine_bounds(self):
     match self._classification:
       case LayoutClassification.STATIC:
-        return # TODO - Implement
+        return # TODO - Later
       case LayoutClassification.SINGLE_CELL:
         raise Exception('Not implimented')
       case LayoutClassification.HORIZONTAL_1D:
-        min_width = 0
-        max_width = 0
-        current_node = self.graph.get_horizontal_source()
-        while(current_node != None):
-          if(current_node.cell.get_w_policy() == 'fixed'):
-            min_width = min_width + current_node.cell.width
-            if(max_width != MAX_WIDTH):
-              max_width = max_width + current_node.cell.width
-          elif(current_node.cell.get_w_policy() == 'adaptable'):
-            max_width = MAX_WIDTH
-          elif(current_node.cell.get_w_policy() == 'constrained'):
-            print('Constrainted node, not used for min/max width')
-          #get the next node :D
-          if(current_node.get_east() != []):
-            current_node = current_node.get_east()[0]
-          else:
-            current_node = None
-        # self.min_width = min_width
-        # self.max_width = max_width
-        print('bounds', 'min_width', min_width, 'max_width', max_width)
-        return {'min_width': min_width, 'max_width': max_width}
-      case LayoutClassification.VERTICAL_1D:
-        return # TODO - Implement
-
-  def resize_layout(self, new_width, new_height):
-    if(new_width < self.min_width):
-      final_width = self.min_width
-    elif(self.max_width < new_width):
-      final_width = self.max_width
-    else:
-      final_width = new_width
-    original_dimensions = get_dimensions_from_graph(self.graph)
-    horizontal_difference = final_width - original_dimensions['width']
-    # vertical_difference = final_height - original_dimensions['height']
-    match self._classification:
-      case LayoutClassification.HORIZONTAL_1D:
-        self.horizontal_1D_resize(horizontal_difference)
+        # TODO - Now
+        raise Exception('Not implimented')
       case LayoutClassification.VERTICAL_1D:
         raise Exception('Not implimented')
-      case _:
-        return # do nothing!
+
+  def resize_layout(self, new_width, new_height):
+    raise Exception('Not implimented')
+    # if(new_width < self.min_width):
+    #   final_width = self.min_width
+    # elif(self.max_width < new_width):
+    #   final_width = self.max_width
+    # else:
+    #   final_width = new_width
+    # original_dimensions = get_dimensions_from_graph(self.graph)
+    # horizontal_difference = final_width - original_dimensions['width']
+    # # vertical_difference = final_height - original_dimensions['height']
+    # match self._classification:
+    #   case LayoutClassification.HORIZONTAL_1D:
+    #     self.horizontal_1D_resize(horizontal_difference)
+    #   case LayoutClassification.VERTICAL_1D:
+    #     raise Exception('Not implimented')
+    #   case _:
+    #     return # do nothing!
 
   def horizontal_1D_resize(self, change: float):
     if(change == 0):
@@ -119,4 +100,7 @@ class Layout:
       node.set_width(node.get_width() + difference)
 
   def find_node(self, name):
-    self.graph.fineName(name)
+    self.graph.findName(name)
+
+  def set_size_of_node(self, node, name, property):
+    raise Exception('Not implimented')

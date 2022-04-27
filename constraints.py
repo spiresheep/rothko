@@ -1,4 +1,5 @@
 from asyncio import base_subprocess
+from curses import raw
 from typing import final
 import sympy
 from enum import Enum
@@ -38,6 +39,19 @@ class Constraint:
     elif(self._type == ConstraintClassification.EXPRESSION):
       expression = sympy.sympify(self._right)
       return sympy.Eq(self.symbol, expression)
+
+def strings_to_constraints(raw_string_list):
+  results = []
+  for raw_string in raw_string_list:
+    constraint = string_to_constraint(raw_string)
+    results.append(constraint)
+  return results
+
+def string_to_constraint(raw_string):
+  raw_string = 'C.width = canvas.width / 2'
+  processed_string = raw_string.replace('.', '_')
+  print(processed_string)
+  return Constraint(processed_string)
 
 # Below this is testing
 def _proof_of_concept_parse_and_solve_single_fixed():
@@ -332,7 +346,6 @@ def _proof_of_concept_constraints_from_cells_MULTIPLE_adaptable():
   print('symbols_list', symbols_list)
   print('Maximum Solution', solution)
 
-
 def _proof_of_concept_constraints_from_cells_MULTIPLE_CELLS():
   demo_cells = [
     Cell(0, 0, 100, 'fixed', 100, 'fixed', 'B'),
@@ -340,7 +353,7 @@ def _proof_of_concept_constraints_from_cells_MULTIPLE_CELLS():
     Cell(0, 200, 100, 'adaptable', 100, 'adaptable', 'C'),
     Cell(0, 300, 100, 'fixed', 100, 'fixed', 'D')
   ]
-  layout = Layout(demo_cells)
+  layout = Layout(demo_cells, None)
 
 
   fixed_constraints = []
@@ -434,17 +447,118 @@ def _proof_of_concept_constraints_from_cells_MULTIPLE_CELLS():
   print('symbols_list', symbols_list)
   print('Maximum Solution', solution)
 
+def _proof_of_concept_constraints_from_cells_different_size_adaptable_cells():
+  demo_cells = [
+    Cell(0, 0, 100, 'fixed', 100, 'fixed', 'B'),
+    Cell(0, 100, 100, 'adaptable', 100, 'adaptable', 'A'),
+    Cell(0, 200, 200, 'adaptable', 100, 'adaptable', 'C'),
+    Cell(0, 400, 100, 'fixed', 100, 'fixed', 'D')
+  ]
+  layout = Layout(demo_cells)
+  fixed_constraints = []
+  adaptable_cells = []
+# Get constraints from fixed cells and adaptable cells
+  current_node = layout.graph.get_horizontal_source()
+  while (current_node != None):
+    #print('current_node', current_node.cell.get_name())
+    if (current_node.cell.w_policy == 'fixed') & (current_node.cell.name != 'WEST'):
+      fixed_constraints.append(f'{current_node.cell.name}_width = {current_node.cell.width}')
+    elif current_node.cell.w_policy == 'adaptable':
+      adaptable_cells.append(current_node.cell)
+    if (current_node.get_east() != []):
+      current_node = current_node.get_east()[0]
+    else:
+      current_node = None
+  # Generate the adaaptable cell constraint
+  adaptable_constrains = []
+  if(len(adaptable_cells) == 1):
+    first_adaptable_cell = adaptable_cells[0]
+    cell_name = adaptable_cells[0].get_name()
+    adaptable_constrains.append(f'{cell_name}_width = {cell_name}_width ')
+  elif(len(adaptable_cells) > 1):
+    first_adaptable_cell = adaptable_cells[0]
+    first_cell_name = adaptable_cells[0].get_name()
+    for other_cell in adaptable_cells:
+      adaptable_constrains.append(f'{other_cell.get_name()}_width = {first_cell_name}_width*({other_cell.get_width()}/{first_adaptable_cell.get_width()})')
+  print('*~*~*~*~*~*~*~*~*~*~*~**~*~WORKS UP TO HERE')
+  print('ADAPTABLE CONSTRAINTS', adaptable_constrains)
+  #IF MIN_WIDTH OR MAX_WIDHTS ARE IN THE FORMULA... add plox
+  base_constaints = []
+  for constraint in fixed_constraints + adaptable_constrains:
+    if 'MAX_WIDTH' in constraint:
+      base_constaints = [f'MAX_WIDTH = {MAX_WIDTH}']
+      break
+  core_constraints = parse_constraints(base_constaints + fixed_constraints + adaptable_constrains)
+  # Generate the canvas constraint
+  rhs = ''
+  for constraint in core_constraints:
+    if((str(constraint.get_symbol()) != 'MAX_WIDTH')  & (str(constraint.get_symbol()) != 'MIN_WIDTH')):
+      if len(rhs) != 0:
+        rhs = rhs + '+' + str(constraint.get_symbol())
+      else:
+        rhs = str(constraint.get_symbol())
+  width_constraint = f'canvas_width = {rhs}'
+  core_constraints.append(Constraint(width_constraint))
+  # Minimized adaptable cells
+  minimizing_constraint = []
+  if(len(adaptable_cells) > 1):
+    cell_name = adaptable_cells[0].get_name()
+    minimizing_constraint.append(f'{cell_name}_width = 0')
+  #NOW SOLVE <3
+  symbols_list = []
+  f_list = []
+  for constraint in core_constraints + parse_constraints(minimizing_constraint):
+    symbols_list.append(constraint.get_symbol())
+    f_list.append(constraint.get_equation())
+  solution = sympy.solve(f_list, symbols_list)
+  print('flist', f_list)
+  print('symbols_list', symbols_list)
+  print('Minimum Solution', solution)
+  # Maximize adaptable cells
+  maximzing_constraint = []
+  if(len(adaptable_cells) >= 1):
+    cell_name = adaptable_cells[0].get_name()
+    print ('CELLLLL NAME', cell_name)
+    current_node = layout.graph.get_horizontal_source()
+    # Get constraints from fixed cells and adaptable cells
+    rhs = ''
+    while (current_node != None):
+      if (current_node.cell.get_name() != cell_name) & (current_node.cell.get_name() != 'WEST'):
+        name = current_node.cell.name + '_width'
+        if len(rhs) != 0:
+          rhs = rhs + '-' + name
+        else:
+          rhs = name
+      if (current_node.get_east() != []):
+        current_node = current_node.get_east()[0]
+      else:
+        current_node = None
+    maximzing_constraint.append(f'{cell_name}_width = {MAX_WIDTH} - {rhs}')
+    print('MAXIMIZING CONSTRAINT', maximzing_constraint)
+  #NOW SOLVE <3
+  symbols_list = []
+  f_list = []
+  for constraint in core_constraints + parse_constraints(maximzing_constraint):
+    symbols_list.append(constraint.get_symbol())
+    f_list.append(constraint.get_equation())
+  #remove symbol duplicates
+  solution = sympy.solve(f_list, symbols_list)
+  print('flist', f_list)
+  print('symbols_list', symbols_list)
+  print('Maximum Solution', solution)
 
 def _proof_of_concept_constraints_from_cells_WITH_CONSTRAINTS(): #!WIP
   demo_cells = [
     Cell(0, 0, 100, 'fixed', 100, 'fixed', 'B'),
     Cell(0, 100, 100, 'adaptable', 100, 'adaptable', 'A'),
-    Cell(0, 200, 100, 'adaptable', 100, 'adaptable', 'C'),
+    Cell(0, 200, 100, 'constrained', 100, 'constrained', 'C'),
     Cell(0, 300, 100, 'fixed', 100, 'fixed', 'D')
   ]
   layout = Layout(demo_cells)
-
-
+  raw_constraints = [
+    'C.width = Canvas.width / 2'
+  ]
+  constraints_from_JSON = strings_to_constraints(raw_constraints)
   fixed_constraints = []
   names_of_adaptable_cells = []
   current_node = layout.graph.get_horizontal_source()
@@ -477,7 +591,7 @@ def _proof_of_concept_constraints_from_cells_WITH_CONSTRAINTS(): #!WIP
     if 'MAX_WIDTH' in constraint:
       base_constaints = [f'MAX_WIDTH = {MAX_WIDTH}']
       break
-  core_constraints = parse_constraints(base_constaints + fixed_constraints + adaptable_constrains)
+  core_constraints = parse_constraints(base_constaints + fixed_constraints + adaptable_constrains) + constraints_from_JSON
   # Generate the canvas constraint
   rhs = ''
   for constraint in core_constraints:
@@ -547,5 +661,7 @@ if __name__ == "__main__":
   print('~~Adaptable Cell Demo~~')
   #_proof_of_concept_constraints_from_cells_adaptable()
   #_proof_of_concept_constraints_from_cells_MULTIPLE_adaptable()
-  _proof_of_concept_constraints_from_cells_MULTIPLE_CELLS()
+  #_proof_of_concept_constraints_from_cells_MULTIPLE_CELLS()
+  _proof_of_concept_constraints_from_cells_different_size_adaptable_cells()
+  _proof_of_concept_constraints_from_cells_WITH_CONSTRAINTS()
   print('~~End Test~~')
