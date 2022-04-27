@@ -43,8 +43,8 @@
       "horizontal": "100 adaptable"
     }
   ],
-  constraint: {
-    'A.width = B.width * 2'
-    'E.width = A.width + C.width'
-  }
+  "constraint": [
+    "A.width = B.width * 2",
+    "E.width = A.width + C.width"
+  ]
 }

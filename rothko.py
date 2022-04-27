@@ -36,7 +36,7 @@ def draw_solid_rect(canvas, fill, left, top, right, bottom):
   return result
 
 def canvas_resize(window, width, height):
-  canvas = window['canvas']
+  canvas = window['drawing_area']
   canvas.TKCanvas.configure(width=width, height=height)
   window.refresh()
 
@@ -172,10 +172,10 @@ def draw(canvas, cells_to_draw):
       )
 
 # Function that draws a layout
-def draw_from_layout(window, layout: Layout):
+def draw_from_layout(canvas, layout: Layout):
   graph = layout.graph
   if(layout._classification == LayoutClassification.HORIZONTAL_1D):
-    canvas = window['canvas']
+    # canvas = window['drawing_area']
     canvas_size = get_dimensions_from_graph(graph)
     canvas.TKCanvas.configure(
       width=canvas_size['width'],
@@ -330,7 +330,7 @@ def render_layout_preview_window():
       sg.FileBrowse()],
     [sg.Button('LOAD LAYOUT', bind_return_key=True)],
     #[sg.Text(f'Max_X: 0, Max_X: {MAX_WIDTH}, Min_Y: 0, Max_Y: {MAX_HEIGHT}')],
-    [sg.Canvas(size=(600, 100), background_color='black', key= 'canvas')]
+    [sg.Canvas(size=(600, 100), background_color='black', key='drawing_area')]
   ]
   return sg.Window('Layout Viewer', layout, finalize=True)
 
@@ -344,12 +344,21 @@ if __name__ == "__main__":
     if event == 'LOAD LAYOUT':
       source_file = values['-sourcefile-']
       source_path, source_filename = os.path.split(source_file)
-      cells_to_draw = parse(source_file)
-      layout = Layout(cells_to_draw)
-      layout_size = get_dimensions(cells_to_draw)
-      canvas_resize(window1, layout_size['width'], layout_size['height'])
-      draw(window['canvas'], cells_to_draw)
+      layout = parse(source_file)
+      canvas_resize(window1, layout._current_width, layout._current_height)
+      draw_from_layout(window['drawing_area'], layout)
       if(window2 != None):
         window2.close()
-      window2 = render_edit_window(layout_size['width'], layout_size['height'])
---
+      window2 = render_edit_window(layout._current_width, layout._current_height)
+    # if event == 'UPDATE PREVIEW':
+    #   if(layout.get_classification() == LayoutClassification.STATIC):
+    #     new_height = values['HEIGHT']
+    #     new_width = values['WIDTH']
+    #     canvas_resize(window1, new_width, new_height)
+    #   elif(layout.get_classification() == LayoutClassification.HORIZONTAL_1D):
+    #     new_height = values['HEIGHT']
+    #     new_width = values['WIDTH']
+    #     layout.resize_layout(int(new_width), int(new_height))
+    #     draw_from_layout(window1, layout)
+    #   else:
+    #     raise Exception('Not implimented')

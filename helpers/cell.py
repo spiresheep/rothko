@@ -1,4 +1,4 @@
-from colors import convert_policy_to_color
+from helpers.colors import convert_policy_to_color
 
 # Data about a single rectangle within the layout.
 class Cell:

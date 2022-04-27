@@ -1,11 +1,11 @@
 from enum import Enum
 import sympy
 # Local imports
-from cell import Cell
-from constraints import Constraint, strings_to_constraints, parse_constraints
-from dimensions import get_dimensions, get_dimensions_from_graph
-from dimensions import MIN_WIDTH, MIN_HEIGHT, MAX_WIDTH, MAX_HEIGHT
-from graph import Graph
+from helpers.cell import Cell
+from helpers.constraints import Constraint, strings_to_constraints, parse_constraints
+from helpers.dimensions import get_dimensions, get_dimensions_from_graph
+from helpers.dimensions import MIN_WIDTH, MIN_HEIGHT, MAX_WIDTH, MAX_HEIGHT
+from helpers.graph import Graph
 
 # Categorization of layouts to make it easier to reason about them
 class LayoutClassification(Enum):
@@ -32,6 +32,8 @@ class Layout:
     self._classification = self._determine_classification()
     # Now can get min and max_width
     # print('Min and Max', self.determine_bounds())
+    if(self._classification != LayoutClassification.HORIZONTAL_1D):
+      return
     bounds = self.determine_bounds()
     self._min_width = bounds['min_width']
     self._max_width = bounds['max_width']
@@ -60,8 +62,6 @@ class Layout:
       return LayoutClassification.VERTICAL_1D
     else:
       return LayoutClassification.STATIC
-
-
 
   def determine_bounds(self):
     match self._classification:

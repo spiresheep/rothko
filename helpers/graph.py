@@ -1,6 +1,6 @@
 import sys
-from cell import Cell
-from dimensions import get_dimensions, MIN_WIDTH, MIN_HEIGHT, MAX_WIDTH, MAX_HEIGHT
+from helpers.cell import Cell
+from helpers.dimensions import get_dimensions, MIN_WIDTH, MIN_HEIGHT, MAX_WIDTH, MAX_HEIGHT
 
 SOURCE = {
   'WEST': 'west',

@@ -1,7 +1,7 @@
 import sympy
 from enum import Enum
-from cell import Cell
-from dimensions import MIN_WIDTH, MAX_WIDTH
+from helpers.cell import Cell
+from helpers.dimensions import MIN_WIDTH, MAX_WIDTH
 
 class ConstraintClassification(Enum):
   LITERAL = 0 # A constrain that is 'solved' and used to solve other constraints
