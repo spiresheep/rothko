@@ -193,6 +193,9 @@ class Layout:
       if(name != 'canvas'):
         print('RESIZE', name, solution[key])
         self.graph.set_node_width(name, solution[key])
+      if(name == 'canvas'):
+        print('current canvas', solution[key])
+        self._current_width = float(solution[key])
     return
 
   def find_node(self, name):

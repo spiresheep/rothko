@@ -40,146 +40,15 @@ def canvas_resize(window, width, height):
   canvas.TKCanvas.configure(width=width, height=height)
   window.refresh()
 
-def draw(canvas, cells_to_draw):
-  for cell in cells_to_draw:
-    left = cell.left
-    right = cell.get_right()
-    top = cell.top
-    bottom = cell.get_bottom()
-    width_color = cell.get_w_color()
-    height_color = cell.get_h_color()
-    #draw a solid color rectangle
-    if width_color == height_color:
-      canvas.TKCanvas.create_rectangle(
-        left,
-        top,
-        right,
-        bottom,
-        fill=width_color,
-        outline='',
-        width=0
-      )
-    #draw a mixed policy rectangle
-    else:
-      outline_width = 1
-      border_size = 2
-      canvas.TKCanvas.create_rectangle(
-        left,
-        top,
-        right,
-        bottom,
-        fill=colors['light_grey'],
-        outline='',
-        width=0
-      )
-      #draw blue lines
-      if height_color == colors['blue']:
-        draw_outlined_rect( #north line
-          canvas, outline_width, colors['blue'],
-          left, 
-          top,
-          right - outline_width,
-          top + border_size + outline_width
-        )
-        draw_outlined_rect(# south line
-          canvas, outline_width, colors['blue'],
-          left,
-          bottom - border_size - (2 * outline_width),
-          right - outline_width,
-          bottom - outline_width #double check correctness
-        )
-      if width_color == colors['blue']:
-        draw_outlined_rect(#west line
-          canvas, outline_width, colors['blue'],
-          left,
-          top,
-          left + border_size + outline_width, bottom - outline_width
-        )
-        draw_outlined_rect(#east line
-          canvas, outline_width, colors['blue'],
-          right - border_size - (2 * outline_width),
-          top, right - outline_width,
-          bottom - outline_width
-        )
-      #draw green lines
-      if height_color == colors['green']:
-        draw_outlined_rect( #north line
-          canvas, outline_width, colors['green'],
-          left, 
-          top,
-          right - outline_width,
-          top + border_size + outline_width
-        )
-        draw_outlined_rect(# south line
-          canvas, outline_width, colors['green'],
-          left,
-          bottom - border_size - (2 * outline_width),
-          right - outline_width,
-          bottom - outline_width #double check correctness
-        )
-      if width_color == colors['green']:
-        draw_outlined_rect(#west line
-          canvas, outline_width, colors['green'],
-          left,
-          top,
-          left + border_size + outline_width, bottom - outline_width
-        )
-        draw_outlined_rect(#east line
-          canvas, outline_width, colors['green'],
-          right - border_size - (2 * outline_width),
-          top, right - outline_width,
-          bottom - outline_width
-        )
-    # #draw yellow lines
-      if height_color == colors['yellow']:
-        draw_outlined_rect(#north line
-          canvas, outline_width, colors['yellow'],
-          left,
-          top,
-          right - outline_width,
-          top + border_size + outline_width
-        )
-        draw_outlined_rect(#south line
-          canvas, outline_width, colors['yellow'],
-          left, bottom - border_size - (2 * outline_width),
-          right - outline_width,
-          bottom- outline_width)
-      if width_color == colors['yellow']:
-        draw_outlined_rect(#west line
-          canvas, outline_width, colors['yellow'],
-          left,
-          top,
-          left + border_size + outline_width,
-          bottom - outline_width
-        )
-        draw_outlined_rect(#east line
-          canvas, outline_width, colors['yellow'],
-          right - border_size - (2 * outline_width),
-          top,
-          right - outline_width,
-          bottom - outline_width
-        )
-    #write text
-    if cell.name != '':
-      middle_height = (top + bottom) / 2
-      middle_width = (left + right) / 2
-      canvas.TKCanvas.create_text(
-        middle_width,
-        middle_height,
-        text=cell.name,
-        width=(right-left),
-        fill='black'
-      )
-
 # Function that draws a layout
 def draw_from_layout(canvas, layout: Layout):
   graph = layout.graph
   if(layout._classification == LayoutClassification.HORIZONTAL_1D):
     # canvas = window['drawing_area']
-    canvas_size = get_dimensions_from_graph(graph)
+    #canvas_size = get_dimensions_from_graph(graph)
     canvas.TKCanvas.configure(
-      width=canvas_size['width'],
-      height=canvas_size['height']
+      width=layout._current_width,
+      height=layout._current_height
     )
     current_node = graph.get_horizontal_source()
     current_x = 0
@@ -325,14 +194,14 @@ def render_edit_window(width, height):
   return sg.Window("Edit Controls", layout, finalize=True)
 
 def render_layout_preview_window():
-  layout = [
+  window_layout = [
     [sg.Text('Source Layout File'), sg.Input(key='-sourcefile-', size=(45, 1)),
       sg.FileBrowse()],
     [sg.Button('LOAD LAYOUT', bind_return_key=True)],
     #[sg.Text(f'Max_X: 0, Max_X: {MAX_WIDTH}, Min_Y: 0, Max_Y: {MAX_HEIGHT}')],
     [sg.Canvas(size=(600, 100), background_color='black', key='drawing_area')]
   ]
-  return sg.Window('Layout Viewer', layout, finalize=True)
+  return sg.Window('Layout Viewer', window_layout, finalize=True)
 
 if __name__ == "__main__":
   window1, window2 = render_layout_preview_window(), None
@@ -350,15 +219,15 @@ if __name__ == "__main__":
       if(window2 != None):
         window2.close()
       window2 = render_edit_window(layout._current_width, layout._current_height)
-    # if event == 'UPDATE PREVIEW':
-    #   if(layout.get_classification() == LayoutClassification.STATIC):
-    #     new_height = values['HEIGHT']
-    #     new_width = values['WIDTH']
-    #     canvas_resize(window1, new_width, new_height)
-    #   elif(layout.get_classification() == LayoutClassification.HORIZONTAL_1D):
-    #     new_height = values['HEIGHT']
-    #     new_width = values['WIDTH']
-    #     layout.resize_layout(int(new_width), int(new_height))
-    #     draw_from_layout(window1, layout)
-    #   else:
-    #     raise Exception('Not implimented')
+    if event == 'UPDATE PREVIEW':
+      if(layout.get_classification() == LayoutClassification.STATIC):
+        new_height = values['HEIGHT']
+        new_width = values['WIDTH']
+        canvas_resize(window1['drawing_area'], new_width, new_height)
+      elif(layout.get_classification() == LayoutClassification.HORIZONTAL_1D):
+        new_height = values['HEIGHT']
+        new_width = values['WIDTH']
+        layout.resize_layout(float(new_width), float(new_height))
+        draw_from_layout(window1['drawing_area'], layout)
+      else:
+        raise Exception('Not implimented')
