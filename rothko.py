@@ -6,8 +6,10 @@ from helpers.dimensions import MAX_HEIGHT, MAX_WIDTH, get_dimensions, get_dimens
 from helpers.layout import Layout, LayoutClassification
 from helpers.parse_from_json import parse
 
-OUTLINE_WIDTH = 1
+# The size of the border for mixed policy cells
 BORDER_SIZE = 2
+# The size of the outline of the border
+OUTLINE_WIDTH = 1 
 
 def draw_outlined_rect(canvas, outline_width, fill, left, top, right, bottom):
   result = canvas.TKCanvas.create_rectangle(
@@ -169,12 +171,16 @@ def draw(canvas, cells_to_draw):
         fill='black'
       )
 
-def redraw_from_graph(window, layout: Layout):
+# Function that draws a layout
+def draw_from_layout(window, layout: Layout):
   graph = layout.graph
   if(layout._classification == LayoutClassification.HORIZONTAL_1D):
     canvas = window['canvas']
     canvas_size = get_dimensions_from_graph(graph)
-    canvas.TKCanvas.configure(width=canvas_size['width'], height=canvas_size['height'])
+    canvas.TKCanvas.configure(
+      width=canvas_size['width'],
+      height=canvas_size['height']
+    )
     current_node = graph.get_horizontal_source()
     current_x = 0
     current_y = 0
@@ -188,6 +194,7 @@ def redraw_from_graph(window, layout: Layout):
   else:
     raise Exception('Format not supported')
 
+# Function that draws a single cell of a layout from a node
 def draw_node(canvas, x, y, node: Node):
   top = y
   left = x
@@ -354,6 +361,6 @@ if __name__ == "__main__":
         new_height = values['HEIGHT']
         new_width = values['WIDTH']
         layout.resize_layout(int(new_width), int(new_height))
-        redraw_from_graph(window1, layout)
+        draw_from_layout(window1, layout)
       else:
         raise Exception('Not implimented')

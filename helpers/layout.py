@@ -16,8 +16,7 @@ class LayoutClassification(Enum):
 class Layout:
   def __init__(self, cells, constraints=None):
     self.initial_cells = cells
-    # These initial values are not the final values
-    # The min and max values might be better defaults.
+    # Canvas is the current size of the layout
     bounds = get_dimensions(cells)
     canvas_width = bounds['width']
     canvas_height = bounds['height']
@@ -31,7 +30,6 @@ class Layout:
     # Generate some extra data about the layout - immutable properties - to cut
     # down on repetitive work.
     self._classification = self._determine_classification()
-
 
   # Helper function that computes the type of layout
   def _determine_classification(self): # DONE

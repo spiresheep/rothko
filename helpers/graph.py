@@ -23,13 +23,16 @@ class Node:
     self._east.append(node)
 
   def get_width(self):
-    return int(self._width)
+    return float(self._width)
 
   def set_width(self, width):
     self._width = width
 
   def get_height(self):
-    return int(self._height)
+    return float(self._height)
+
+  def set_height(self, new_height):
+    self._height = new_height
 
 # Used to keep track of the relationships between Nodes (derived from cells)
 class Graph:
