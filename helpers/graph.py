@@ -73,6 +73,7 @@ class Graph:
   def traverse_west_to_east(self):
     current_node = self.horizontal_source
     while(current_node != None):
+      print(current_node.cell.get_name(), current_node.get_width())
       if(current_node.get_east() != []):
         current_node = current_node.get_east()[0]
       else:
@@ -98,6 +99,10 @@ class Graph:
       if(node.cell.get_name() == name):
         return node
     return result
+
+  def set_node_width(self, name, width):
+    node = self.find_node(name)
+    node.set_width(width)
 
   def clone(self):
     return Graph(self.cells)
