@@ -324,18 +324,18 @@ def render_edit_window(width, height):
   ]
   return sg.Window("Edit Controls", layout, finalize=True)
 
-def render_layout_preview():
+def render_layout_preview_window():
   layout = [
     [sg.Text('Source Layout File'), sg.Input(key='-sourcefile-', size=(45, 1)),
       sg.FileBrowse()],
     [sg.Button('LOAD LAYOUT', bind_return_key=True)],
-    [sg.Text(f'Max_X: 0, Max_X: {MAX_WIDTH}, Min_Y: 0, Max_Y: {MAX_HEIGHT}')],
+    #[sg.Text(f'Max_X: 0, Max_X: {MAX_WIDTH}, Min_Y: 0, Max_Y: {MAX_HEIGHT}')],
     [sg.Canvas(size=(600, 100), background_color='black', key= 'canvas')]
   ]
   return sg.Window('Layout Viewer', layout, finalize=True)
 
 if __name__ == "__main__":
-  window1, window2 = render_layout_preview(), None
+  window1, window2 = render_layout_preview_window(), None
   layout = None
   while True:
     window, event, values = sg.read_all_windows()
@@ -352,15 +352,4 @@ if __name__ == "__main__":
       if(window2 != None):
         window2.close()
       window2 = render_edit_window(layout_size['width'], layout_size['height'])
-    if event == 'UPDATE PREVIEW':
-      if(layout.get_classification() == LayoutClassification.STATIC):
-        new_height = values['HEIGHT']
-        new_width = values['WIDTH']
-        canvas_resize(window1, new_width, new_height)
-      elif(layout.get_classification() == LayoutClassification.HORIZONTAL_1D):
-        new_height = values['HEIGHT']
-        new_width = values['WIDTH']
-        layout.resize_layout(int(new_width), int(new_height))
-        draw_from_layout(window1, layout)
-      else:
-        raise Exception('Not implimented')
+--

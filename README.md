@@ -38,6 +38,7 @@ Solid colored sqaures blend into each other.
 
 ## TODO - Boring Super Secret Dev Notes
 1. Add names to cells without names so the app does not crash
+1. Change how traverseal works and make it easier to traverse across cells
 1. Cell/Layout Editor
 2. Improve the layout config file format. Improvements will take the form of
 removing JSON chaff, adding shorthands for all the properties and more.

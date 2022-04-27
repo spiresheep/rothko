@@ -1,6 +1,3 @@
-from asyncio import base_subprocess
-from curses import raw
-from typing import final
 import sympy
 from enum import Enum
 from helpers.cell import Cell
@@ -652,8 +649,6 @@ def _proof_of_concept_constraints_from_cells_putting_it_all_together():
     Cell(0, 0, 100, 'fixed', 100, 'fixed', 'B'),
     Cell(0, 100, 100, 'adaptable', 100, 'adaptable', 'A'),
     Cell(0, 200, 200, 'constrained', 100, 'constrained', 'C'),
-    Cell(0, 400, 100, 'fixed', 100, 'fixed', 'D')
-    Cell(0, 400, 100, 'fixed', 100, 'fixed', 'D')
     Cell(0, 400, 100, 'fixed', 100, 'fixed', 'D')
   ]
   raw_constraints = ['C.width = canvas.width']

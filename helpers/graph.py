@@ -1,5 +1,6 @@
-from helpers.cell import Cell
-from helpers.dimensions import get_dimensions, MIN_WIDTH, MIN_HEIGHT, MAX_WIDTH, MAX_HEIGHT
+import sys
+from cell import Cell
+from dimensions import get_dimensions, MIN_WIDTH, MIN_HEIGHT, MAX_WIDTH, MAX_HEIGHT
 
 SOURCE = {
   'WEST': 'west',
@@ -34,16 +35,19 @@ class Node:
   def set_height(self, new_height):
     self._height = new_height
 
-# Used to keep track of the relationships between Nodes (derived from cells)
+# Used to keep track of all the cells that make up a layout
 class Graph:
   def __init__(self, cells):
     self.nodes = []
     for cell in cells:
       self.nodes.append(Node(cell))
-    self.horizontal_source = Node(Cell(0, 0, 0, 'fixed', MAX_HEIGHT, 'fixed', 'WEST'))
+    self.horizontal_source = Node(
+      Cell(0, 0, 0, 'fixed', MAX_HEIGHT, 'fixed', 'WEST')
+    )
     self.build_horizontal_graph(self.horizontal_source)
     # self.vertical_source = Node(
     #   Cell(0, 0, MAX_WIDTH, 'fixed', 0, 'fixed', 'SOUTH'))
+    self._all_adaptable_cells = None #This is None for lazy execution
 
   def build_horizontal_graph(self, current_node):
     for other_node in self.nodes:
@@ -78,6 +82,15 @@ class Graph:
   def get_horizontal_source(self):
     return self.horizontal_source
 
+  def get_all_adaptable_cells(self):
+    if(self._all_adaptable_cells == None):
+      self._all_adaptable_cells = []
+      current_node = self.get_horizontal_source()
+      for current_node in self.nodes:
+        if current_node.cell.w_policy == 'adaptable':
+          self._all_adaptable_cells .append(current_node.cell)
+    return self._all_adaptable_cells
+
   # Returns None if no such node exists
   def find_node(self, name):
     result = None
@@ -88,3 +101,15 @@ class Graph:
 
   def clone(self):
     return Graph(self.cells)
+
+if __name__ == "__main__":
+  print('Running tests for Graph.py')
+  demo_cells = [
+    Cell(0, 0, 100, 'adaptable', 100, 'adaptable', 'B'),
+    Cell(0, 100, 100, 'adaptable', 100, 'adaptable', 'A'),
+    Cell(0, 200, 100, 'adaptable', 100, 'adaptable', 'C'),
+    Cell(0, 300, 100, 'adaptable', 100, 'adaptable', 'D')
+  ]
+  test_graph = Graph(demo_cells)
+  print('Number of adaptable cells', len(test_graph.get_all_adaptable_cells()))
+  test_graph.traverse_west_to_east()

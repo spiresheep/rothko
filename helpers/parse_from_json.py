@@ -1,5 +1,6 @@
 import json
-from helpers.cell import Cell
+from cell import Cell
+from constraints import Constraint, strings_to_constraints
 
 # Function that parses the layout configuration file and returns a list of cells.
 def parse(file_name):
@@ -7,7 +8,7 @@ def parse(file_name):
   pre_json = file.read()
   local = json.loads(pre_json)
   local = json.loads(pre_json)
-  cells = []
+  cell_list = []
   for cell in local['cells']:
     splitH = cell["horizontal"].split(" ")
     splitV = cell["vertical"].split(" ")
@@ -23,9 +24,14 @@ def parse(file_name):
       splitV[1],
       name
     )
-    cells.append(newCell)
+    cell_list.append(newCell)
+  raw_constraint_list = []
   if('constraints' in local):
-    print(local['constraints'])
+    #print(local['constraints'])
     for constraint in local['constraints']:
-      print(constraint)
-  return cells
+      raw_constraint_list.append(constraint)
+  #print('Done Parse')
+  return {
+    'cells': cell_list,
+    'constraint': strings_to_constraints(raw_constraint_list)
+  }

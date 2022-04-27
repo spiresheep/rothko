@@ -3,9 +3,9 @@ MIN_WIDTH = 0
 # The lower bound on the canvas height
 MIN_HEIGHT = 0
 # The upper bound on the canvas width
-MAX_WIDTH = 6000 #2^24
+MAX_WIDTH = 16777216
 # The upper bound on the canvas height
-MAX_HEIGHT = 6000 #2^24
+MAX_HEIGHT = 16777216
 
 # Determines the size of the canvas required to display the current list of cells
 def get_dimensions(cells):
@@ -22,10 +22,11 @@ def get_dimensions(cells):
 
 def get_dimensions_from_graph(graph):
   width = 0
-  height = 100 # TODO - Calculate
+  height = 0 #TODO - Add support for vertical layouts
   current_node = graph.get_horizontal_source()
   while current_node != None:
     width = width + current_node.get_width()
+    height = current_node.get_height()
     if(current_node.get_east() != []):
       current_node = current_node.get_east()[0]
     else:
