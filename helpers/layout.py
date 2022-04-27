@@ -74,7 +74,7 @@ class Layout:
       case LayoutClassification.VERTICAL_1D:
         raise Exception('Not implimented')
 
-  def _get_1D_horizontal_min_and_max(self):
+  def _get_1D_horizontal_min_and_max(self): #Figure out why JSON constraints are missing
     self._core_constraints = []
     fixed_constraints = []
     adaptable_cells = self.graph.get_all_adaptable_cells()
@@ -157,12 +157,15 @@ class Layout:
       symbols_list.append(constraint.get_symbol())
       f_list.append(constraint.get_equation())
     max_solution = sympy.solve(f_list, symbols_list)
+    print('min_slution', min_solution)
+    print('max_solution', max_solution)
     return {
       'min_width': min_solution[canvas_constraint.get_symbol()],
       'max_width': max_solution[canvas_constraint.get_symbol()]
     }
 
   def resize_layout(self, new_width, new_height):
+    print('values', type(self._min_width), type(new_width))
     if(new_width < self._min_width):
       final_width = self._min_width
     elif(self._max_width < new_width):
