@@ -1,8 +1,5 @@
 import sympy
-from enum import Enum
-from helpers.cell import Cell
-from helpers.layout import Layout
-from helpers.dimensions import MIN_WIDTH, MIN_HEIGHT, MAX_WIDTH, MAX_HEIGHT
+from helpers.dimensions import MIN_WIDTH, MAX_WIDTH
 
 # Below this is testing and scratch work
 def _proof_of_concept_solve():
@@ -29,17 +26,17 @@ def solve_min_max_adaptable():
   max = sympy.maximum(function, x, sympy.Interval(MIN_WIDTH, MAX_WIDTH))
   print('Min', min, 'Max', max)
 
-def coworker_hint():
+def shaobin_layout():
   a, b, c, d, e, f, w = sympy.symbols('a, b, c, d, e, f, w')
   eq1 = sympy.Equality(a, b * 2)
   eq2 = sympy.Equality(e, a + c)
   eq3 = sympy.Equality(b, 100) #fixed
   eq4 = sympy.Equality(d, 200) #fixed
   eq5 = sympy.Equality(w, a + b + c + d + e + f)
-  eq6 = sympy.Equality(w, 10000)
+  eq6 = sympy.Equality(w, 1000)
   #interate over all the undefined ones and make them equal each other!
   eq7 = sympy.Equality(c, f)
-  print(sympy.solve((eq1, eq2, eq3, eq4, eq5, eq6, eq7), (a, b, c, d, e, f, w)))
+  print('Shaobin', sympy.solve((eq1, eq2, eq3, eq4, eq5, eq6, eq7), (a, b, c, d, e, f, w)))
 
 def get_min_and_max():
   a, b, c, d, e, f, w = sympy.symbols('a, b, c, d, e, f, w')
@@ -53,7 +50,7 @@ def get_min_and_max():
   eq7 = sympy.Equality(c, 0)
   print('The layout min is...' , sympy.solve((eq1, eq2, eq3, eq4, eq5, eq6, eq7), (a, b, c, d, e, f, w))[w])
   # Now to get max!? This doesn't seem right....
-  eq7 = sympy.Equality(c, MAX_HEIGHT - a - b - d - e - f)
+  eq7 = sympy.Equality(c, MAX_WIDTH - a - b - d - e - f)
   print('The layout max is...' , sympy.solve((eq1, eq2, eq3, eq4, eq5, eq6, eq7), (a, b, c, d, e, f, w))[w])
 
 def get_min_and_max_2():
@@ -69,7 +66,7 @@ def get_min_and_max_2():
   eq7 = sympy.Equality(c, 0)
   print('The layout min is...' , sympy.solve((eq1, eq2, eq3, eq4, eq5, eq6, eq7, eq8), (a, b, c, d, e, f,g, w))[w])
   # Now to get max!?
-  eq7 = sympy.Equality(c, MAX_HEIGHT - a - b - d - e - f - g)
+  eq7 = sympy.Equality(c, MAX_WIDTH - a - b - d - e - f - g)
   print('The layout max is...' , sympy.solve((eq1, eq2, eq3, eq4, eq5, eq6, eq7, eq8), (a, b, c, d, e, f,g, w))[w])
 
 def get_min_and_max_3(): # No regular blue!
@@ -87,7 +84,7 @@ def get_min_and_max_3(): # No regular blue!
 if __name__ == "__main__":
   print('~~Start Test~~')
   _proof_of_concept_solve()
-  coworker_hint()
+  shaobin_layout()
   get_min_and_max()
   get_min_and_max_2()
   get_min_and_max_3()
