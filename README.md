@@ -1,13 +1,13 @@
-# rothko - Last updated April 27, 2022
+# rothko - Last updated April 28, 2022
 
 A layout system for verifying and generating beautiful layouts.
 
-## To run dev build
+## To run app locally
 1. Install Python 3.
 2. Install PySimpleGUI using the command `pip3 install pysimplegui`
 3. Install SymPy using the command `pip3 install pysimplegui`
 4. `cd` into the directory
-5. To run the code type `python3 rothko.py`
+5. To run the app type `python3 rothko.py`
 
 ## To build app for MacOS
 1. `pyinstaller --onefile --windowed --osx-bundle-identifier com.github.spiresheep --icon icon.icns --name RothkoViewer rothko.py`
@@ -18,27 +18,34 @@ A layout system for verifying and generating beautiful layouts.
 
 ## Config File Notes/Rules
 
-Names that cannot be used for cells:
-  EAST, WEST, NORTH, SOUTH, MAX_WIDTH, MIN_WIDTH, Canvas
-
 Each cell must have a unique name.
 
-~~They are to be used as variables for constraints.
-leftover - eg. Leftover/2 - meaning give HALF the ratio to the cell
-viewport - Can be thought of a supercell or superlayout that contains the layout.
-Canvas.width is the width of the viewport. Eg. width = canvas.width / 2~~
+**These names cannot be used for cells:**
+  **EAST, WEST, NORTH, SOUTH, MAX_WIDTH, MIN_WIDTH, canvas**
+
+If you need to use the canvas in a constraint you can do the following:
+width -> canvas_width
+height -> canvas_height
+
+Constraints can be expressed in the following way:
+### Literal
+eg. C.width = 100
+### Property
+eg. C.width = A.width
+### Expression
+eg. C.width = A.width + 100
+eg. C.width = A.width - B.width
 
 ## Limitations
-The layout breaks when the width is less than or equal the sum of the outline.
-and border. and the borders are different colors.
+The layout breaks when the width of a mixed policy component is less than 4.
 
 It also breaks when the text is much wider than the cell it's in.
 
-Solid colored sqaures blend into each other.
+Solid colored squares blend into each other.
 
 ## TODO - Boring Super Secret Dev Notes
 1. Add names to cells without names so the app does not crash
-1. Change how traverseal works and make it easier to traverse across cells
+1. Change how traversal works and make it easier to traverse across cells
 1. Cell/Layout Editor
 2. Improve the layout config file format. Improvements will take the form of
 removing JSON chaff, adding shorthands for all the properties and more.
