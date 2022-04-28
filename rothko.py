@@ -35,17 +35,14 @@ def draw_solid_rect(canvas, fill, left, top, right, bottom):
   )
   return result
 
-def canvas_resize(window, width, height):
+def resize_canvas(window, width, height):
   canvas = window['drawing_area']
   canvas.TKCanvas.configure(width=width, height=height)
   window.refresh()
 
-# Function that draws a layout
 def draw_from_layout(canvas, layout: Layout):
   graph = layout.graph
   if(layout._classification == LayoutClassification.HORIZONTAL_1D):
-    # canvas = window['drawing_area']
-    #canvas_size = get_dimensions_from_graph(graph)
     canvas.TKCanvas.configure(
       width=layout._current_width,
       height=layout._current_height
@@ -54,7 +51,8 @@ def draw_from_layout(canvas, layout: Layout):
     current_x = 0
     current_y = 0
     while current_node != None:
-      draw_node(canvas, current_x, current_y, current_node)
+      if(current_node.get_width() != 0):
+        draw_node(canvas, current_x, current_y, current_node)
       if(current_node.get_east() != []):
         current_x = current_x + current_node.get_width()
         current_node = current_node.get_east()[0]
@@ -198,7 +196,8 @@ def render_layout_preview_window():
     [sg.Text('Source Layout File'), sg.Input(key='-sourcefile-', size=(45, 1)),
       sg.FileBrowse()],
     [sg.Button('LOAD LAYOUT', bind_return_key=True)],
-    #[sg.Text(f'Max_X: 0, Max_X: {MAX_WIDTH}, Min_Y: 0, Max_Y: {MAX_HEIGHT}')],
+    [sg.Text(f'Min Width: 0, Max Width: {MAX_WIDTH}, Min Height: 0, \
+      Max Height: {MAX_HEIGHT}', key='-min-and-max-')],
     [sg.Canvas(size=(600, 100), background_color='black', key='drawing_area')]
   ]
   return sg.Window('Layout Viewer', window_layout, finalize=True)
@@ -214,16 +213,17 @@ if __name__ == "__main__":
       source_file = values['-sourcefile-']
       source_path, source_filename = os.path.split(source_file)
       layout = parse(source_file)
-      canvas_resize(window1, layout._current_width, layout._current_height)
+      resize_canvas(window1, layout._current_width, layout._current_height)
       draw_from_layout(window['drawing_area'], layout)
       if(window2 != None):
         window2.close()
+      window1['-min-and-max-'].update(f'Min Width: {layout._min_width:.1f} Max Width: {layout._max_width:.1f}')
       window2 = render_edit_window(layout._current_width, layout._current_height)
     if event == 'UPDATE PREVIEW':
       if(layout.get_classification() == LayoutClassification.STATIC):
         new_height = values['HEIGHT']
         new_width = values['WIDTH']
-        canvas_resize(window1['drawing_area'], new_width, new_height)
+        resize_canvas(window1['drawing_area'], new_width, new_height)
       elif(layout.get_classification() == LayoutClassification.HORIZONTAL_1D):
         new_height = values['HEIGHT']
         new_width = values['WIDTH']

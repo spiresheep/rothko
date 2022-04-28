@@ -133,7 +133,8 @@ class Layout:
       # Get constraints from fixed cells and adaptable cells
       rhs = ''
       while (current_node != None):
-        if (current_node.cell.get_name() != cell_name) & (current_node.cell.get_name() != 'WEST'):
+        if (current_node.cell.get_name() != cell_name) & \
+            (current_node.cell.get_name() != 'WEST'):
           name = current_node.cell.name + '_width'
           if len(rhs) != 0:
             rhs = rhs + '-' + name
@@ -183,7 +184,7 @@ class Layout:
     solution = sympy.solve(f_list, symbols_list)
     for key in solution:
       name = str(key).split('_')[0]
-      if(name != 'canvas' & self.graph.find_node() != None):
+      if(name != 'canvas') & (self.graph.find_node(name) != None):
         self.graph.set_node_width(name, solution[key])
       if(name == 'canvas'):
         self._current_width = float(solution[key])
