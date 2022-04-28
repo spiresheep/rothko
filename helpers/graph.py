@@ -1,9 +1,9 @@
-from helpers.cell import Cell
-from helpers.dimensions import MAX_WIDTH, MAX_HEIGHT
+from cell import Cell
+from dimensions import MAX_WIDTH, MAX_HEIGHT
 
 SOURCE = {
   'WEST': 'west',
-  'SOUTH':'south'
+  'NORTH':'north'
 }
 
 # Used to keep track of the neighboring nodes and current width of the cell.
@@ -11,15 +11,32 @@ class Node:
   def __init__(self, cell):
     self.cell = cell
     self._east = []
+    self._south = []
     self._width = cell.get_width()
     self._height = cell.get_height()
 
   # Returns a list of all the nodes touching the east side of the node
+  # Sorted from smallest top value to largest
   def get_east(self):
     return self._east
 
   def append_east(self, node):
-    self._east.append(node)
+    if len(self._east) == 0:
+      self._east.append(node)
+    else:
+      index = len(self._east)
+      new_node_top = node.cell.get_top()
+      for i in range(len(self._east)):
+        other_node_top = self._east[i].cell.get_top()
+        if(new_node_top < other_node_top):
+          index = i
+          break
+      self._east.insert(index, node)
+
+  def get_south(self):
+    return self._south
+
+
 
   def get_width(self):
     return float(self._width)
@@ -43,7 +60,7 @@ class Graph:
       Cell(0, 0, 0, 'fixed', MAX_HEIGHT, 'fixed', 'WEST')
     )
     self.build_horizontal_graph(self.horizontal_source)
-    # self.vertical_source = Node(Cell(0, 0, MAX_WIDTH, 'fixed', 0, 'fixed', 'SOUTH'))
+    self.vertical_source = Node(Cell(0, 0, MAX_WIDTH, 'fixed', 0, 'fixed', 'SOUTH'))
     self._all_adaptable_cells = None
 
   def build_horizontal_graph(self, current_node):
@@ -117,4 +134,13 @@ if __name__ == "__main__":
   print('The graph will now be traversed from the west source, \
     to the eastmost cell')
   test_graph._traverse_west_to_east()
+
+  new_node = Node(Cell(0, 0, 100, 'adaptable', 100, 'adaptable', 'B'))
+  new_node.append_east(Node(Cell(4, 100, 100, 'adaptable', 50, 'adaptable', 'C')))
+  new_node.append_east(Node(Cell(50, 100, 100, 'adaptable', 50, 'adaptable', 'A')))
+  new_node.append_east(Node(Cell(0, 100, 100, 'adaptable', 50, 'adaptable', 'D')))
+  
+  print(len(new_node.get_east()))
+  for node in new_node.get_east():
+    print(node.cell.get_name())
   print('Tests complete for Graph.py')
