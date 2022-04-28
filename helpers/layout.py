@@ -27,6 +27,7 @@ class Layout:
     self.graph = Graph(cells)
     # Using the graph and constraint_strings calculate min and max size
     self._constraints = constraints
+    print('constraints', self._constraints)
     # Generate some extra data about the layout - immutable properties - to cut
     # down on repetitive work.
     self._classification = self._determine_classification()
@@ -107,6 +108,8 @@ class Layout:
         base_constaints = [f'MAX_WIDTH = {MAX_WIDTH}']
         break
     core_constraints = parse_constraints(base_constaints + fixed_constraints + adaptable_constrains) + self._constraints
+    print('~~core_constraints~~', core_constraints)
+    for
     self._core_constraints = core_constraints # So I don't ever have to get these constraints again
     # Generate the canvas constraint
     rhs = ''
@@ -131,6 +134,9 @@ class Layout:
       symbols_list.append(constraint.get_symbol())
       f_list.append(constraint.get_equation())
     min_solution = sympy.solve(f_list, symbols_list)
+    print('flist', f_list)
+    print('symbols_list', symbols_list)
+    print('min_solution', min_solution)
     # Maximize adaptable cells
     maximzing_constraint = []
     if(len(adaptable_cells) >= 1):
@@ -157,7 +163,8 @@ class Layout:
       symbols_list.append(constraint.get_symbol())
       f_list.append(constraint.get_equation())
     max_solution = sympy.solve(f_list, symbols_list)
-    print('min_slution', min_solution)
+    print('flist', f_list)
+    print('symbols_list', symbols_list)
     print('max_solution', max_solution)
     return {
       'min_width': min_solution[canvas_constraint.get_symbol()],

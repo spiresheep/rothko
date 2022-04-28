@@ -30,4 +30,4 @@ def parse(file_name):
   if('constraints' in local):
     for constraint in local['constraints']:
       raw_constraint_list.append(constraint)
-  return Layout(cell_list, raw_constraint_list)  
+  return Layout(cell_list, strings_to_constraints(raw_constraint_list))  
