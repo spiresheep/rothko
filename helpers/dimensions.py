@@ -22,14 +22,24 @@ def get_dimensions(cells):
 
 # Determines the size of the canvas required to display the current graph
 def get_dimensions_from_graph(graph):
+  print('Get dimensions')
   width = 0
-  height = 0 #TODO - Add support for vertical layouts
+  height = 0
   current_node = graph.get_horizontal_source()
   while current_node != None:
+    print('current node', current_node.cell.get_name())   
     width = width + current_node.get_width()
-    height = current_node.get_height()
     if(current_node.get_east() != []):
       current_node = current_node.get_east()[0]
     else:
       current_node = None
+  current_node = graph.get_vertical_source()
+  while current_node != None:
+    print('current node', current_node.cell.get_name())   
+    height = height + current_node.get_height()
+    if(current_node.get_south() != []):
+      current_node = current_node.get_south()[0]
+    else:
+      current_node = None
+  print('current size', width, height)
   return {'width': width, 'height': height}

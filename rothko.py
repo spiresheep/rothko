@@ -42,11 +42,12 @@ def resize_canvas(window, width, height):
 
 def draw_from_layout(canvas, layout: Layout):
   graph = layout.graph
+  print('current width and height', layout._current_width, layout._current_height)
+  canvas.TKCanvas.configure(
+    width=layout._current_width,
+    height=layout._current_height
+  )
   if(layout._classification == LayoutClassification.HORIZONTAL_1D):
-    canvas.TKCanvas.configure(
-      width=layout._current_width,
-      height=layout._current_height
-    )
     current_node = graph.get_horizontal_source()
     current_x = 0
     current_y = 0
@@ -58,8 +59,21 @@ def draw_from_layout(canvas, layout: Layout):
         current_node = current_node.get_east()[0]
       else:
         current_node = None
+  elif(layout._classification == LayoutClassification.VERTICAL_1D):
+    current_node = graph.get_vertical_source()
+    current_x = 0
+    current_y = 0
+    while current_node != None:
+      print(current_node.cell.get_name())
+      if(current_node.get_height() != 0):
+        draw_node(canvas, current_x, current_y, current_node)
+      if(current_node.get_south() != []):
+        current_y = current_y + current_node.get_height()
+        current_node = current_node.get_south()[0]
+      else:
+        current_node = None
   else:
-    raise Exception('Format not supported')
+    raise Exception('Layout class not supported')
 
 # Function that draws a single cell of a layout from a node
 def draw_node(canvas, x, y, node: Node):
@@ -213,18 +227,20 @@ if __name__ == "__main__":
       source_file = values['-sourcefile-']
       source_path, source_filename = os.path.split(source_file)
       layout = parse(source_file)
+      print('layout type', layout.get_classification())
       resize_canvas(window1, layout._current_width, layout._current_height)
       draw_from_layout(window['drawing_area'], layout)
       if(window2 != None):
         window2.close()
-      window1['-min-and-max-'].update(f'Min Width: {layout._min_width:.1f} Max Width: {layout._max_width:.1f}')
+      window1['-min-and-max-'].update(f'Min Width: {(layout.get_min_width()):.1f} Max Width: {(layout.get_max_height()):.1f}')
       window2 = render_edit_window(layout._current_width, layout._current_height)
     if event == 'UPDATE PREVIEW':
       if(layout.get_classification() == LayoutClassification.STATIC):
         new_height = values['HEIGHT']
         new_width = values['WIDTH']
         resize_canvas(window1['drawing_area'], new_width, new_height)
-      elif(layout.get_classification() == LayoutClassification.HORIZONTAL_1D):
+      elif(layout.get_classification() == LayoutClassification.HORIZONTAL_1D) |\
+          (layout.get_classification() == LayoutClassification.VERTICAL_1D):
         new_height = values['HEIGHT']
         new_width = values['WIDTH']
         layout.resize_layout(float(new_width), float(new_height))
