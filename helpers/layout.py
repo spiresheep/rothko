@@ -228,4 +228,4 @@ if __name__ == "__main__":
   demo_constraints = ['C.width = canvas.width / 2']
   demo_layout = Layout(demo_cells, strings_to_constraints(demo_constraints))
   demo_layout.resize_layout(demo_layout.get_max_width(), 100)
-  demo_layout.graph.traverse_west_to_east()
+  demo_layout.graph._traverse_west_to_east()

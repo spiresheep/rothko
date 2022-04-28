@@ -1,7 +1,5 @@
 import sympy
 from enum import Enum
-from helpers.cell import Cell
-from helpers.dimensions import MIN_WIDTH, MAX_WIDTH
 
 class ConstraintClassification(Enum):
   LITERAL = 0 # A constrain that is 'solved' and used to solve other constraints
@@ -53,7 +51,5 @@ def string_to_constraint(raw_string):
   processed_string = raw_string.replace('.', '_') # TODO - Improve
   return Constraint(processed_string)
 
-#END OF CURRENT WORK OF PROCESS
 if __name__ == "__main__":
-  print('~~Start Test~~')
-  print('~~End Test~~')
+  print('Test code here')

@@ -1,6 +1,5 @@
-import sys
 from helpers.cell import Cell
-from helpers.dimensions import get_dimensions, MIN_WIDTH, MIN_HEIGHT, MAX_WIDTH, MAX_HEIGHT
+from helpers.dimensions import MAX_WIDTH, MAX_HEIGHT
 
 SOURCE = {
   'WEST': 'west',
@@ -45,14 +44,13 @@ class Graph:
       Cell(0, 0, 0, 'fixed', MAX_HEIGHT, 'fixed', 'WEST')
     )
     self.build_horizontal_graph(self.horizontal_source)
-    # self.vertical_source = Node(
-    #   Cell(0, 0, MAX_WIDTH, 'fixed', 0, 'fixed', 'SOUTH'))
-    self._all_adaptable_cells = None #This is None for lazy execution
+    # self.vertical_source = Node(Cell(0, 0, MAX_WIDTH, 'fixed', 0, 'fixed', 'SOUTH'))
+    self._all_adaptable_cells = None
 
   def build_horizontal_graph(self, current_node):
     for other_node in self.nodes:
-      if((current_node.cell.get_name() != other_node.cell.get_name()) &
-          (current_node.cell.get_right() == other_node.cell.get_left())):
+      if (current_node.cell.get_name() != other_node.cell.get_name()) & \
+          (current_node.cell.get_right() == other_node.cell.get_left()):
         current_node.append_east(other_node)
     if(current_node.get_east() == []):
       return
@@ -70,11 +68,11 @@ class Graph:
     return True
 
   # This is a function used for debugging
-  def traverse_west_to_east(self):
+  def _traverse_west_to_east(self):
     current_node = self.horizontal_source
-    while(current_node != None):
+    while current_node != None:
       print(current_node.cell.get_name(), current_node.get_width())
-      if(current_node.get_east() != []):
+      if current_node.get_east() != []:
         current_node = current_node.get_east()[0]
       else:
         current_node = None
@@ -83,6 +81,7 @@ class Graph:
   def get_horizontal_source(self):
     return self.horizontal_source
 
+  # Returns a list of all adaptable cells in graph
   def get_all_adaptable_cells(self):
     if(self._all_adaptable_cells == None):
       self._all_adaptable_cells = []
@@ -100,12 +99,10 @@ class Graph:
         return node
     return result
 
+  # Set's the width of the Node with name to width
   def set_node_width(self, name, width):
     node = self.find_node(name)
     node.set_width(width)
-
-  def clone(self):
-    return Graph(self.cells)
 
 if __name__ == "__main__":
   print('Running tests for Graph.py')
@@ -116,5 +113,9 @@ if __name__ == "__main__":
     Cell(0, 300, 100, 'adaptable', 100, 'adaptable', 'D')
   ]
   test_graph = Graph(demo_cells)
+  print('New graph created with no issues.')
   print('Number of adaptable cells', len(test_graph.get_all_adaptable_cells()))
-  test_graph.traverse_west_to_east()
+  print('The graph will now be traversed from the west source, \
+    to the eastmost cell')
+  test_graph._traverse_west_to_east()
+  print('Tests complete for Graph.py')

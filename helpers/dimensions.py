@@ -20,6 +20,7 @@ def get_dimensions(cells):
       max_height = bottom
   return {'width': max_width, 'height': max_height}
 
+# Determines the size of the canvas required to display the current graph
 def get_dimensions_from_graph(graph):
   width = 0
   height = 0 #TODO - Add support for vertical layouts
