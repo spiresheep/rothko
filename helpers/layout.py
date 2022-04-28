@@ -109,7 +109,6 @@ class Layout:
         break
     core_constraints = parse_constraints(base_constaints + fixed_constraints + adaptable_constrains) + self._constraints
     print('~~core_constraints~~', core_constraints)
-    for
     self._core_constraints = core_constraints # So I don't ever have to get these constraints again
     # Generate the canvas constraint
     rhs = ''

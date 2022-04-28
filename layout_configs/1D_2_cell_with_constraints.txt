@@ -9,20 +9,20 @@
     },
     {
       "name": "B",
-      "horizontal": "100 fixed",
+      "horizontal": "200 fixed",
       "vertical": "100 fixed",
       "top": 0,
       "left": 100
     },
     {
       "name": "C",
-      "horizontal": "100 constrained",
+      "horizontal": "200 constrained",
       "vertical": "100 fixed",
       "top": 0,
-      "left": 200
+      "left": 300
     }
   ],
   "constraints": [
-    "C.width = Canvas.width / 2"
+    "C.width = canvas.width / 2"
   ]
 }
