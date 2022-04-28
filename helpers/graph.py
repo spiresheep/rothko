@@ -6,7 +6,6 @@ SOURCE = {
   'SOUTH':'south'
 }
 
-# Derived from Cell.
 # Used to keep track of the neighboring nodes and current width of the cell.
 class Node:
   def __init__(self, cell):

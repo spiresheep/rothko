@@ -1,10 +1,10 @@
 from enum import Enum
 import sympy
-# Local imports
 from helpers.cell import Cell
-from helpers.constraints import Constraint, strings_to_constraints, parse_constraints
-from helpers.dimensions import get_dimensions, get_dimensions_from_graph
-from helpers.dimensions import MIN_WIDTH, MIN_HEIGHT, MAX_WIDTH, MAX_HEIGHT
+from helpers.constraints import Constraint, strings_to_constraints, \
+  parse_constraints
+from helpers.dimensions import get_dimensions
+from helpers.dimensions import MAX_WIDTH, MAX_HEIGHT
 from helpers.graph import Graph
 
 # Categorization of layouts to make it easier to reason about them
@@ -19,26 +19,20 @@ class LayoutClassification(Enum):
 class Layout:
   def __init__(self, cells, constraints=[]):
     self.initial_cells = cells
-    # Canvas is the current size of the layout
+    self._constraints = constraints
     current_size = get_dimensions(cells)
     self._current_width = current_size['width']
     self._current_height = current_size['height']
-    # Build the graph!
     self.graph = Graph(cells)
-    # Using the graph and constraint_strings calculate min and max size
-    self._constraints = constraints
-    print('constraints', self._constraints)
     # Generate some extra data about the layout - immutable properties - to cut
     # down on repetitive work.
     self._classification = self._determine_classification()
-    # Now can get min and max_width
-    # print('Min and Max', self.determine_bounds())
     if(self._classification != LayoutClassification.HORIZONTAL_1D):
       return
     bounds = self.determine_bounds()
     self._min_width = bounds['min_width']
     self._max_width = bounds['max_width']
-    # TODO - Correct min and max_height
+    # TODO - Correct min_height and max_height
     self._min_height = self._current_height
     self._max_height = self._current_height
 
@@ -55,9 +49,7 @@ class Layout:
   def _determine_classification(self): # DONE
     is_horizontal = self.graph.is_horizontal_1D()
     is_vertical = False # TODO - Add test for this
-    if(is_horizontal and is_vertical):
-      return LayoutClassification.SINGLE_CELL
-    elif(is_horizontal):
+    if(is_horizontal):
       return LayoutClassification.HORIZONTAL_1D
     elif(is_vertical):
       return LayoutClassification.VERTICAL_1D
@@ -68,14 +60,14 @@ class Layout:
     match self._classification:
       case LayoutClassification.STATIC:
         return # TODO - Later
-      case LayoutClassification.SINGLE_CELL:
+      case LayoutClassification.SINGLE_CELL: # Factor out
         return self._get_1D_horizontal_min_and_max()
       case LayoutClassification.HORIZONTAL_1D:
         return self._get_1D_horizontal_min_and_max()
       case LayoutClassification.VERTICAL_1D:
         raise Exception('Not implimented')
 
-  def _get_1D_horizontal_min_and_max(self): #Figure out why JSON constraints are missing
+  def _get_1D_horizontal_min_and_max(self): 
     self._core_constraints = []
     fixed_constraints = []
     adaptable_cells = self.graph.get_all_adaptable_cells()
@@ -133,9 +125,6 @@ class Layout:
       symbols_list.append(constraint.get_symbol())
       f_list.append(constraint.get_equation())
     min_solution = sympy.solve(f_list, symbols_list)
-    print('flist', f_list)
-    print('symbols_list', symbols_list)
-    print('min_solution', min_solution)
     # Maximize adaptable cells
     maximzing_constraint = []
     if(len(adaptable_cells) >= 1):
@@ -162,16 +151,12 @@ class Layout:
       symbols_list.append(constraint.get_symbol())
       f_list.append(constraint.get_equation())
     max_solution = sympy.solve(f_list, symbols_list)
-    print('flist', f_list)
-    print('symbols_list', symbols_list)
-    print('max_solution', max_solution)
     return {
       'min_width': min_solution[canvas_constraint.get_symbol()],
       'max_width': max_solution[canvas_constraint.get_symbol()]
     }
 
   def resize_layout(self, new_width, new_height):
-    print('values', type(self._min_width), type(new_width))
     if(new_width < self._min_width):
       final_width = self._min_width
     elif(self._max_width < new_width):
@@ -188,22 +173,19 @@ class Layout:
         return # do nothing!
 
   def horizontal_1D_resize(self, new_width):
-    # Get constraints
-    full_constraint_list = self._core_constraints + [Constraint(f'canvas_width = {new_width}')]
+    full_constraint_list = self._core_constraints + \
+      [Constraint(f'canvas_width = {new_width}')]
     symbols_list = []
     f_list = []
     for constraint in full_constraint_list:
       symbols_list.append(constraint.get_symbol())
       f_list.append(constraint.get_equation())
     solution = sympy.solve(f_list, symbols_list)
-    print(solution)
     for key in solution:
       name = str(key).split('_')[0]
-      if(name != 'canvas'):
-        print('RESIZE', name, solution[key])
+      if(name != 'canvas' & self.graph.find_node() != None):
         self.graph.set_node_width(name, solution[key])
       if(name == 'canvas'):
-        print('current canvas', solution[key])
         self._current_width = float(solution[key])
     return
 
@@ -219,7 +201,6 @@ if __name__ == "__main__":
   ]
   demo_constraints = []
   demo_layout = Layout(demo_cells, demo_constraints)
-
   demo_cells = [
     Cell(0, 0, 100, 'adaptable', 100, 'fixed', 'B'),
     Cell(0, 100, 200, 'fixed', 100, 'fixed', 'A'),
