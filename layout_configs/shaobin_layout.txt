@@ -1,0 +1,50 @@
+{
+  "cells": [
+    {
+      "name": "A",
+      "top": 0,
+      "left": 0,
+      "vertical": "100 fixed",
+      "horizontal": "200 constrained"
+    },
+    {
+      "name": "B",
+      "top": 0,
+      "left": 200,
+      "vertical": "100 fixed",
+      "horizontal": "100 fixed"
+    },
+    {
+      "name": "C",
+      "top": 0,
+      "left": 300,
+      "vertical": "100 fixed",
+      "horizontal": "100 adaptable"
+    },
+    {
+      "name": "D",
+      "top": 0,
+      "left": 400,
+      "vertical": "100 fixed",
+      "horizontal": "200 fixed"
+    },
+    {
+      "name": "E",
+      "top": 0,
+      "left": 600,
+      "vertical": "100 fixed",
+      "horizontal": "200 constrained"
+    },
+    {
+      "name": "F",
+      "top": 0,
+      "left": 800,
+      "vertical": "100 fixed",
+      "horizontal": "100 adaptable"
+    }
+  ],
+  "constraints": [
+    "A.width = B.width * 2",
+    "E.width = A.width + C.width"
+  ]
+}
