@@ -3,7 +3,7 @@ from helpers.cell import Cell
 from helpers.layout import Layout
 from helpers.constraints import Constraint, strings_to_constraints
 
-# Function that parses the layout configuration file and returns a list of cells.
+# Function that parses the layout configuration file and returns a Layout
 def parse(file_name):
   file = open(file_name, 'r')
   pre_json = file.read()
