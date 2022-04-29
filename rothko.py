@@ -72,11 +72,28 @@ def draw_from_layout(canvas, layout: Layout):
         current_node = current_node.get_south()[0]
       else:
         current_node = None
+  elif(layout._classification == LayoutClassification.STATIC):
+    draw_static_layout(canvas, 0, 0, graph.get_horizontal_source())
   else:
     raise Exception('Layout class not supported')
 
+# Incorrect, boooo
+def draw_static_layout(canvas, x, y, current_node):
+  draw_node(canvas, x, y, current_node)
+  current_y = y
+  current_x = x + current_node.get_width()
+  if(current_node.get_east() != []):
+    for next_node in current_node.get_east():
+      if(next_node.cell.get_top() == 0):
+        current_y = 0
+      draw_static_layout(canvas, current_x, current_y, next_node)
+      current_y = current_y + next_node.get_height()
+  else:
+    return
+
 # Function that draws a single cell of a layout from a node
 def draw_node(canvas, x, y, node: Node):
+  print('Node name', node.cell.get_name(), x, y)
   top = y
   left = x
   bottom = y + node.get_height()
@@ -210,8 +227,8 @@ def render_layout_preview_window():
     [sg.Text('Source Layout File'), sg.Input(key='-sourcefile-', size=(45, 1)),
       sg.FileBrowse()],
     [sg.Button('LOAD LAYOUT', bind_return_key=True)],
-    [sg.Text(f'Min Width: 0, Max Width: {MAX_WIDTH}, Min Height: 0, \
-      Max Height: {MAX_HEIGHT}', key='-min-and-max-')],
+    [sg.Text(f'Min Width: 0, Max Width: {MAX_WIDTH}', key='width_bounds')],
+    [sg.Text(f'Min Height: 0, Max Height: {MAX_HEIGHT}', key='height_bounds')],
     [sg.Canvas(size=(600, 100), background_color='black', key='drawing_area')]
   ]
   return sg.Window('Layout Viewer', window_layout, finalize=True)
@@ -232,7 +249,8 @@ if __name__ == "__main__":
       draw_from_layout(window['drawing_area'], layout)
       if(window2 != None):
         window2.close()
-      window1['-min-and-max-'].update(f'Min Width: {(layout.get_min_width()):.1f} Max Width: {(layout.get_max_height()):.1f}')
+      window1['width_bounds'].update(f'Min Width: {(layout.get_min_width()):.1f} Max Width: {(layout.get_max_width()):.1f}')
+      window1['height_bounds'].update(f'Min Height: {(layout.get_min_height()):.1f} Max Height: {(layout.get_max_height()):.1f}')   
       window2 = render_edit_window(layout._current_width, layout._current_height)
     if event == 'UPDATE PREVIEW':
       if(layout.get_classification() == LayoutClassification.STATIC):

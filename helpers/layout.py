@@ -38,7 +38,6 @@ class Layout:
       self._max_width = bounds['max_width']
     elif(self._classification == LayoutClassification.VERTICAL_1D):
       bounds = self.determine_bounds()
-      print('Vertical Bounds', type(bounds['min_height']), bounds['min_height'], type(bounds['max_height']), bounds['max_height'])
       self._min_height = bounds['min_height']
       self._max_height = bounds['max_height']
 
@@ -79,7 +78,6 @@ class Layout:
       case LayoutClassification.HORIZONTAL_1D:
         return self._get_1D_horizontal_get_width_bounds()
       case LayoutClassification.VERTICAL_1D:
-        print('~~~~Get verical boudns~~~')
         return self._get_1D_vertical_get_height_bounds()
 
   def _get_1D_horizontal_get_width_bounds(self): 
@@ -330,7 +328,6 @@ class Layout:
         self.graph.set_node_height(name, solution[key])
       if(name == 'canvas'):
         self._current_width = float(solution[key])
-    print('vertical 1D resize done!')
     return
 
   def find_node(self, name):
