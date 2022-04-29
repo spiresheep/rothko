@@ -80,7 +80,9 @@ class Graph:
   def build_horizontal_graph(self, current_node):
     for other_node in self.nodes:
       if(current_node.cell.get_name() != other_node.cell.get_name()) & \
-          (current_node.cell.get_right() == other_node.cell.get_left()):
+          (current_node.cell.get_right() == other_node.cell.get_left()) & \
+          (current_node.cell.get_top() < other_node.cell.get_bottom()) &\
+          (current_node.cell.get_bottom() > other_node.cell.get_top()): #hmmmmmm
         current_node.append_east(other_node)
     if(current_node.get_east() == []):
       return
@@ -92,7 +94,7 @@ class Graph:
   def build_vertical_graph(self, current_node):
     for other_node in self.nodes:
       if(current_node.cell.get_name() != other_node.cell.get_name()) & \
-          (current_node.cell.get_bottom() == other_node.cell.get_top()):
+          (current_node.cell.get_bottom() == other_node.cell.get_top()): ## Add new constraints here!
         current_node.append_south(other_node)
     if(current_node.get_south() == []):
       return
