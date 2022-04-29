@@ -9,8 +9,8 @@
     },
     {
       "name": "B",
-      "horizontal": "100 fixed",
-      "vertical": "100 fixed",
+      "horizontal": "100 adaptable",
+      "vertical": "100 adaptable",
       "top": 100,
       "left": 0
     },
