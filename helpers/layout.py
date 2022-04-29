@@ -61,7 +61,7 @@ class Layout:
     is_horizontal = self.graph.is_horizontal_1D()
     is_vertical = self.graph.is_vertical_1D()
     if(is_horizontal & is_vertical):
-      return LayoutClassification.SINGLE_CELL
+      return LayoutClassification.HORIZONTAL_1D
     if(is_horizontal):
       return LayoutClassification.HORIZONTAL_1D
     elif(is_vertical):
@@ -157,7 +157,10 @@ class Layout:
           current_node = current_node.get_east()[0]
         else:
           current_node = None
-      maximzing_constraint.append(f'{cell_name}_width = {MAX_WIDTH} - {rhs}')
+      if rhs == '':
+        maximzing_constraint.append(f'{cell_name}_width = {MAX_WIDTH}')
+      else:
+        maximzing_constraint.append(f'{cell_name}_width = {MAX_WIDTH} - {rhs}')
     # Now solve
     symbols_list = []
     f_list = []
