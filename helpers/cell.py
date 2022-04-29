@@ -12,7 +12,13 @@ class Cell:
     self._h_policy = h_policy
 
   def get_name(self):
-    return self._name;
+    return self._name
+
+  def public_name(self):
+    if self._name[0] == '_':
+      return ''
+    else:
+      return self._name
 
   def get_top(self):
     return self._top

@@ -1,0 +1,38 @@
+{
+  "cells": [
+    {
+      "name": "A",
+      "top": 0,
+      "left": 0,
+      "horizontal": "100 constrained",
+      "vertical": "100 fixed"
+    },
+    {
+      "name": "B",
+      "top": 0,
+      "left": 100,
+      "horizontal": "50 constrained",
+      "vertical": "100 fixed"
+    },
+    {
+      "name": "C",
+      "top": 0,
+      "left": 150,
+      "horizontal": "25 adaptable",
+      "vertical": "100 adaptable"
+    },
+    {
+      "name": "D",
+      "top": 0,
+      "left": 175,
+      "horizontal": "25 adaptable",
+      "vertical": "100 adaptable"
+    }
+  ],
+  "constraints": [
+    "A_width = 2 * B_width",
+    "A_width = canvas_width / 2",
+    "B_width = C_width + D_width",
+    "B_width = 50"
+  ]
+}

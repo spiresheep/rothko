@@ -5,6 +5,7 @@ from helpers.constraints import Constraint, strings_to_constraints
 
 # Function that parses the layout configuration file and returns a Layout
 def parse(file_name):
+  number_of_unnamed = 0
   file = open(file_name, 'r')
   pre_json = file.read()
   local = json.loads(pre_json)
@@ -16,6 +17,9 @@ def parse(file_name):
     name = ""
     if "name" in cell:
       name = cell["name"]
+    else:
+      name = f'_cell{number_of_unnamed}'
+      number_of_unnamed += 1
     newCell = Cell(
       cell["top"],
       cell["left"],

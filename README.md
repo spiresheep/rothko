@@ -5,7 +5,7 @@ A layout system for verifying and generating beautiful layouts.
 ## To run app locally
 1. Install Python 3.
 2. Install PySimpleGUI using the command `pip3 install pysimplegui`
-3. Install SymPy using the command `pip3 install pysimplegui`
+3. Install SymPy using the command `pip3 install sympy`
 4. `cd` into the directory
 5. To run the app type `python3 rothko.py`
 

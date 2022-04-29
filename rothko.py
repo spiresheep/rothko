@@ -204,7 +204,7 @@ def draw_node(canvas, x, y, node: Node):
         right - OUTLINE_WIDTH,
         bottom - OUTLINE_WIDTH
       )
-  if node.cell.name != '':
+  if node.cell.public_name() != '':
     canvas.TKCanvas.create_text(
       (left + right) / 2,
       (top + bottom) / 2,
