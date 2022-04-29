@@ -1,4 +1,4 @@
-# rothko - Last updated April 28, 2022
+# rothko - Last updated April 29, 2022
 
 A layout system for verifying and generating beautiful layouts.
 
@@ -44,8 +44,10 @@ It also breaks when the text is much wider than the cell it's in.
 Solid colored squares blend into each other.
 
 ## TODO - Boring Super Secret Dev Notes
-1. Add names to cells without names so the app does not crash
-1. Change how traversal works and make it easier to traverse across cells
-1. Cell/Layout Editor
+1. Add names to cells without names so the app does not crash.
+1. Change how traversal works and make it easier to traverse across cells.
+1. Update how constraints are created to support 2D layouts.
+1. Tell user how to improve a "unsolveable" layouts instead of crashing.
+1. Cell/Layout Editor.
 2. Improve the layout config file format. Improvements will take the form of
 removing JSON chaff, adding shorthands for all the properties and more.
