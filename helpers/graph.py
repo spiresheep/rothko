@@ -76,6 +76,9 @@ class Graph:
     self.build_vertical_graph(self.vertical_source)
     self._all_adaptable_width_cells = None
     self._all_adaptable_height_cells = None
+    self._all_fixed_width_cells = None
+    self._all_fixed_height_cells = None
+
 
   def build_horizontal_graph(self, current_node):
     for other_node in self.nodes:
@@ -161,6 +164,22 @@ class Graph:
         if current_node.cell.h_policy == 'adaptable':
           self._all_adaptable_height_cells.append(current_node.cell)
     return self._all_adaptable_height_cells
+
+  def get_all_fixed_height_cells(self):
+    if(self._all_fixed_height_cells == None):
+      self._all_fixed_height_cells = []
+      for current_node in self.nodes:
+        if current_node.cell.h_policy == 'fixed':
+          self._all_fixed_height_cells.append(current_node.cell)
+    return self._all_fixed_height_cells
+
+  def get_all_fixed_width_cells(self):
+    if(self._all_fixed_width_cells == None):
+      self._all_fixed_width_cells = []
+      for current_node in self.nodes:
+        if current_node.cell.w_policy == 'fixed':
+          self._all_fixed_width_cells.append(current_node.cell)
+    return self._all_fixed_width_cells
 
   # Returns None if no such node exists
   def find_node(self, name):

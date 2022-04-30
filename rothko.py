@@ -42,7 +42,7 @@ def resize_canvas(window, width, height):
 
 def draw_from_layout(canvas, layout: Layout):
   graph = layout.graph
-  print('current width and height', layout._current_width, layout._current_height)
+  #print('current width and height', layout._current_width, layout._current_height)
   canvas.TKCanvas.configure(
     width=layout._current_width,
     height=layout._current_height
@@ -64,7 +64,7 @@ def draw_from_layout(canvas, layout: Layout):
     current_x = 0
     current_y = 0
     while current_node != None:
-      print(current_node.cell.get_name())
+      #print(current_node.cell.get_name())
       if(current_node.get_height() != 0):
         draw_node(canvas, current_x, current_y, current_node)
       if(current_node.get_south() != []):
@@ -93,7 +93,7 @@ def draw_static_layout(canvas, x, y, current_node):
 
 # Function that draws a single cell of a layout from a node
 def draw_node(canvas, x, y, node: Node):
-  print('Node name', node.cell.get_name(), x, y)
+  #print('Node name', node.cell.get_name(), x, y)
   top = y
   left = x
   bottom = y + node.get_height()
@@ -244,7 +244,7 @@ if __name__ == "__main__":
       source_file = values['-sourcefile-']
       source_path, source_filename = os.path.split(source_file)
       layout = parse(source_file)
-      print('layout type', layout.get_classification())
+      #print('layout type', layout.get_classification())
       resize_canvas(window1, layout._current_width, layout._current_height)
       draw_from_layout(window['drawing_area'], layout)
       if(window2 != None):

@@ -1,8 +1,7 @@
 from enum import Enum
 import sympy
 from helpers.cell import Cell
-from helpers.constraints import Constraint, strings_to_constraints, \
-  parse_constraints
+from helpers.constraints import Constraint
 from helpers.dimensions import get_dimensions, get_dimensions_from_graph
 from helpers.dimensions import MAX_WIDTH, MAX_HEIGHT
 from helpers.graph import Graph
@@ -31,15 +30,12 @@ class Layout:
     self._min_height = self._current_height
     self._max_height = self._current_height
     self._classification = self._determine_classification()
-    self._core_constraints = []
-    if(self._classification == LayoutClassification.HORIZONTAL_1D):
-      bounds = self.determine_bounds()
-      self._min_width = bounds['min_width']
-      self._max_width = bounds['max_width']
-    elif(self._classification == LayoutClassification.VERTICAL_1D):
-      bounds = self.determine_bounds()
-      self._min_height = bounds['min_height']
-      self._max_height = bounds['max_height']
+    self._core_constraints = self.generate_core_constraints(constraints)
+    bounds = self.solve_core_for_min_max()
+    self._min_width = bounds['min_width']
+    self._max_width = bounds['max_width']
+    self._min_height = bounds['min_height']
+    self._max_height = bounds['max_height']
 
   def get_classification(self): # DONE
     return self._classification
@@ -80,195 +76,146 @@ class Layout:
       case LayoutClassification.VERTICAL_1D:
         return self._get_1D_vertical_get_height_bounds()
 
-  def _get_1D_horizontal_get_width_bounds(self): 
-    self._core_constraints = []
-    fixed_constraints = []
-    adaptable_cells = self.graph.get_all_adaptable_width_cells()
-    # Generate constraints from fixed cells
-    current_node = self.graph.get_horizontal_source()
-    while (current_node != None):
-      if (current_node.cell.w_policy == 'fixed') & (current_node.cell.name != 'WEST'):
-        fixed_constraints.append(f'{current_node.cell.name}_width = {current_node.cell.width}')
-      if (current_node.get_east() != []):
-        current_node = current_node.get_east()[0]
-      else:
-        current_node = None
-    # Generate the adaaptable cell constraints
-    adaptable_constrains = []
-    if(len(adaptable_cells) == 1):
-      first_cell = adaptable_cells[0]
-      cell_name = adaptable_cells[0].get_name()
-      adaptable_constrains.append(f'{cell_name}_width = {cell_name}_width')
-    elif(len(adaptable_cells) > 1):
-      first_cell = adaptable_cells[0]
-      first_cell_name = adaptable_cells[0].get_name()
-      for other_cell in adaptable_cells:
-        constraint = (f'{other_cell.get_name()}_width = {first_cell_name}' + 
-          f'_width*({other_cell.get_width()}/{first_cell.get_width()})')
-        adaptable_constrains.append(constraint)
-    # Add these constraints if we need them...
-    base_constaints = []
-    for constraint in fixed_constraints + adaptable_constrains:
-      if 'MAX_WIDTH' in constraint:
-        base_constaints = [f'MAX_WIDTH = {MAX_WIDTH}']
-        break
-    core_constraints = parse_constraints(base_constaints + fixed_constraints + adaptable_constrains) + self._constraints
-    print('~~core_constraints~~', core_constraints)
-    self._core_constraints = core_constraints # So I don't ever have to get these constraints again
-    # Generate the canvas constraint
-    rhs = ''
-    for constraint in core_constraints:
-      if((str(constraint.get_symbol()) != 'MAX_WIDTH') & (str(constraint.get_symbol()) != 'MIN_WIDTH')):
-        if len(rhs) != 0:
-          rhs = rhs + '+' + str(constraint.get_symbol())
-        else:
-          rhs = str(constraint.get_symbol())
-    width_constraint = f'canvas_width = {rhs}'
-    canvas_constraint = Constraint(width_constraint)
-    core_constraints.append(canvas_constraint)
-    # Minimized adaptable cells
-    minimizing_constraint = []
-    if(len(adaptable_cells) >= 1):
-      cell_name = adaptable_cells[0].get_name()
-      minimizing_constraint.append(f'{cell_name}_width = 0')
-    # Now Solve
+  def solve_core_for_min_max(self): #junk atm
     symbols_list = []
     f_list = []
-    for constraint in core_constraints + parse_constraints(minimizing_constraint):
+    for constraint in self._core_constraints:
       symbols_list.append(constraint.get_symbol())
       f_list.append(constraint.get_equation())
-    min_solution = sympy.solve(f_list, symbols_list)
-    # Maximize adaptable cells
-    maximzing_constraint = []
-    if(len(adaptable_cells) >= 1):
-      cell_name = adaptable_cells[0].get_name()
-      current_node = self.graph.get_horizontal_source()
-      # Get constraints from fixed cells and adaptable cells
-      rhs = ''
-      while (current_node != None):
-        if (current_node.cell.get_name() != cell_name) & \
-            (current_node.cell.get_name() != 'WEST'):
-          name = current_node.cell.name + '_width'
-          if len(rhs) != 0:
-            rhs = rhs + '-' + name
-          else:
-            rhs = name
-        if (current_node.get_east() != []):
-          current_node = current_node.get_east()[0]
-        else:
-          current_node = None
-      if rhs == '':
-        maximzing_constraint.append(f'{cell_name}_width = {MAX_WIDTH}')
-      else:
-        maximzing_constraint.append(f'{cell_name}_width = {MAX_WIDTH} - {rhs}')
-    # Now solve
-    symbols_list = []
-    f_list = []
-    for constraint in core_constraints + parse_constraints(maximzing_constraint):
-      symbols_list.append(constraint.get_symbol())
-      f_list.append(constraint.get_equation())
-    max_solution = sympy.solve(f_list, symbols_list)
-    return {
-      'min_width': min_solution[canvas_constraint.get_symbol()],
-      'max_width': max_solution[canvas_constraint.get_symbol()]
+    solution = sympy.solve(f_list, symbols_list)
+    return_values = {
+      'min_width': 0,
+      'max_width': MAX_HEIGHT,
+      'min_height': 0,
+      'max_height': MAX_HEIGHT,
     }
+    solution = sympy.solve(f_list, symbols_list)
+    print(solution)
+    for key in solution:
+      if(str(key) == 'canvas_width'):
+        return_values['min_width'] = solution[key]
+        return_values['max_width'] = solution[key]
+      if(str(key) == 'canvas_height'):
+        return_values['min_height'] = solution[key]
+        return_values['max_height'] = solution[key]
+    print('return_values', return_values)
+    return return_values
 
-  def _get_1D_vertical_get_height_bounds(self):
-    print('Get vertical stuff')
-    self._core_constraints = []
-    fixed_constraints = []
-    adaptable_cells = self.graph.get_all_adaptable_height_cells()
-    # Generate constraints from fixed cells
-    current_node = self.graph.get_vertical_source()
-    while (current_node != None):
-      if (current_node.cell.h_policy == 'fixed') & (current_node.cell.name != 'NORTH'):
-        fixed_constraints.append(f'{current_node.cell.name}_height = {current_node.cell.height}')
-      if (current_node.get_south() != []):
-        current_node = current_node.get_south()[0]
-      else:
-        current_node = None
-    # Generate the adaaptable cell constraints
-    print('fixed_constraints', fixed_constraints)
-    adaptable_constrains = []
-    if(len(adaptable_cells) == 1):
-      first_cell = adaptable_cells[0]
-      cell_name = adaptable_cells[0].get_name()
-      adaptable_constrains.append(f'{cell_name}_height = {cell_name}_height')
-    elif(len(adaptable_cells) > 1):
-      first_cell = adaptable_cells[0]
-      first_cell_name = adaptable_cells[0].get_name()
-      for other_cell in adaptable_cells:
-        constraint = (f'{other_cell.get_name()}_height = {first_cell_name}' + 
-          f'_height*({other_cell.get_height()}/{first_cell.get_height()})')
-        adaptable_constrains.append(constraint)
-    # Add these constraints if we need them...
-    base_constaints = []
-    for constraint in fixed_constraints + adaptable_constrains:
-      if 'MAX_HEIGHT' in constraint:
-        base_constaints = [f'MAX_HEIGHT = {MAX_HEIGHT}']
-        break
-    core_constraints = parse_constraints(base_constaints + fixed_constraints + adaptable_constrains) + self._constraints
-    print('~~core_constraints~~', core_constraints)
-    self._core_constraints = core_constraints # So I don't ever have to get these constraints again
-    print('core constraints',core_constraints)
-    # Generate the canvas constraint
-    rhs = ''
-    for constraint in core_constraints:
-      if((str(constraint.get_symbol()) != 'MAX_HEIGHT') & (str(constraint.get_symbol()) != 'MIN_HEIGHT')):
-        if len(rhs) != 0:
-          rhs = rhs + '+' + str(constraint.get_symbol())
-        else:
-          rhs = str(constraint.get_symbol())
-    height_constraint = f'canvas_height = {rhs}'
-    canvas_constraint = Constraint(height_constraint)
-    core_constraints.append(canvas_constraint)
-    # Minimized adaptable cells
-    minimizing_constraint = []
-    if(len(adaptable_cells) >= 1):
-      cell_name = adaptable_cells[0].get_name()
-      minimizing_constraint.append(f'{cell_name}_height = 0')
-    # Now Solve
+  def generate_core_constraints(self, constraints):
+    core = [
+      Constraint(f'MAX_WIDTH = {MAX_WIDTH}')
+    ]
+    for cell in self.graph.get_all_fixed_height_cells():
+      cell_name = cell.get_name()
+      core.append(Constraint(f'{cell_name}_height={cell.get_height()}'))
+    for cell in self.graph.get_all_fixed_width_cells():
+      cell_name = cell.get_name()
+      core.append(Constraint(f'{cell_name}_width={cell.get_width()}'))
+    for cell in self.graph.get_all_adaptable_width_cells():
+      cell_name = cell.get_name()
+      core.append(Constraint(f'{cell_name}_width={cell_name}_width'))
+    for cell in self.graph.get_all_adaptable_height_cells():
+      cell_name = cell.get_name()
+      core.append(Constraint(f'{cell_name}_height={cell_name}_height'))
+    #print('constraints?', len(core))
+    # Now for a more complicated constraint....
+    #print('width stuff', self.get_width_constraints())
+    core = core + self.get_width_constraints()
+    core = core + self.get_height_constraints()
+    #beep
+   
+    #check constraints
+    print('~~~~Core Constraints Here')
+    for constraint in core:
+      print(constraint._left, '=', constraint._right)
     symbols_list = []
     f_list = []
-
-    for constraint in core_constraints + parse_constraints(minimizing_constraint):
+    for constraint in core:
       symbols_list.append(constraint.get_symbol())
       f_list.append(constraint.get_equation())
-    min_solution = sympy.solve(f_list, symbols_list)
-    print('symbols_list', symbols_list)
-    print('f_list', f_list)
-    print('min_solution', min_solution)
-    # Maximize adaptable cells
-    maximzing_constraint = []
-    if(len(adaptable_cells) >= 1):
-      cell_name = adaptable_cells[0].get_name()
-      current_node = self.graph.get_vertical_source()
-      # Get constraints from fixed cells and adaptable cells
+    solution = sympy.solve(f_list, symbols_list)
+    print(solution)
+    canvas_width_min_not_max = True
+    canvas_height_min_not_max = True
+    for key in solution:
+      if(str(key) == 'canvas_width'):
+        print('key', key)
+        print('omg solution')
+        canvas_width_min_not_max = False
+      if(str(key) == 'canvas_height'):
+        canvas_height_min_not_max = False
+    # WIP
+    if canvas_width_min_not_max:
+      print('Width is under constrained')
+    else:
+      print('min width = max_wdith')
+    if canvas_height_min_not_max:
+      print('Height is under constrained')
+    #WIP
+    return core
+
+  def get_width_constraints(self):
+    source = self.graph.get_horizontal_source()
+    new_constraints = []
+    for node in source.get_east():
+      symbols = self.get_width_symbols(node)
+      print(symbols)
       rhs = ''
-      while (current_node != None):
-        if (current_node.cell.get_name() != cell_name) & \
-            (current_node.cell.get_name() != 'NORTH'):
-          name = current_node.cell.name + '_height'
-          if len(rhs) != 0:
-            rhs = rhs + '-' + name
-          else:
-            rhs = name
-        if (current_node.get_south() != []):
-          current_node = current_node.get_south()[0]
+      for symbol in symbols:
+        if len(rhs) != 0:
+          rhs = rhs + '+' + str(symbol)
         else:
-          current_node = None
-      maximzing_constraint.append(f'{cell_name}_height = {MAX_HEIGHT} - {rhs}')
-    # Now solve
-    symbols_list = []
-    f_list = []
-    for constraint in core_constraints + parse_constraints(maximzing_constraint):
-      symbols_list.append(constraint.get_symbol())
-      f_list.append(constraint.get_equation())
-    max_solution = sympy.solve(f_list, symbols_list)
-    return {
-      'min_height': min_solution[canvas_constraint.get_symbol()],
-      'max_height': max_solution[canvas_constraint.get_symbol()]
-    }
+          rhs = str(symbol)
+      print(f'canvas_width = {rhs}')
+      new_constraints.append(Constraint(f'canvas_width={rhs}'))
+    return new_constraints
+
+  def get_width_symbols(self, node):
+    result = [f'{node.cell.get_name()}_width']
+    print(result)
+    if(node.get_east() != []):
+      result = result + self.get_width_symbols(node.get_east()[0])
+    return result
+
+  def get_height_constraints(self):
+    source = self.graph.get_vertical_source()
+    new_constraints = []
+    for node in source.get_south():
+      symbols = self.get_height_symbols(node)
+      print(symbols)
+      rhs = ''
+      for symbol in symbols:
+        if len(rhs) != 0:
+          rhs = rhs + '+' + str(symbol)
+        else:
+          rhs = str(symbol)
+      print(f'canvas_height = {rhs}')
+      new_constraints.append(Constraint(f'canvas_height={rhs}'))
+    return new_constraints
+
+  def get_height_symbols(self, node):
+    result = [f'{node.cell.get_name()}_height']
+    print(result)
+    if(node.get_south() != []):
+      result = result + self.get_height_symbols(node.get_south()[0])
+    return result
+
+  def apply_solution_to_graph(self, solution):
+    print('update graph')
+    for key in solution:
+      key_as_string = str(key)
+      if key_as_string.count('_') == 2:
+        split_key = key_as_string.rsplit('_',1)
+      else:
+        split_key = key_as_string.split('_')
+      name = split_key[0]
+      property = split_key[1]
+      print('thing', name, property)
+      if(name != 'canvas') & (name != 'MAX'):
+        if(property == 'height'):
+          self.graph.set_node_height(name, solution[key])
+        if(property == 'width'):
+          self.graph.set_node_width(name, solution[key])
 
   def resize_layout(self, new_width, new_height):
     if(new_width < self._min_width):
@@ -286,71 +233,61 @@ class Layout:
     # vertical_difference = final_height - original_dimensions['height']
     match self._classification:
       case LayoutClassification.HORIZONTAL_1D:
-        self.horizontal_1D_resize(final_width)
+        self._resize(final_width, final_height)
       case LayoutClassification.VERTICAL_1D:
-        print('~~~Vertical Resize Done~~~')
-        self.vertical_1D_resize(final_height)
-        print('~~~Vertical Resize Done~~~')
+        self._resize(final_width, final_height)
       case _:
         return # do nothing!
     size = get_dimensions_from_graph(self.graph)
     self._current_height = size['height']
     self._current_width = size['width']
 
-  def horizontal_1D_resize(self, new_width):
+  def _resize(self, new_width, new_height):
     full_constraint_list = self._core_constraints + \
-      [Constraint(f'canvas_width = {new_width}')]
+      [Constraint(f'canvas_height = {new_height}'), Constraint(f'canvas_width = {new_width}')]
     symbols_list = []
     f_list = []
     for constraint in full_constraint_list:
       symbols_list.append(constraint.get_symbol())
       f_list.append(constraint.get_equation())
     solution = sympy.solve(f_list, symbols_list)
-    for key in solution:
-      name = str(key).split('_')[0]
-      if(name != 'canvas') & (self.graph.find_node(name) != None):
-        self.graph.set_node_width(name, solution[key])
-      if(name == 'canvas'):
-        self._current_width = float(solution[key])
-    return
-
-  def vertical_1D_resize(self, new_height):
-    full_constraint_list = self._core_constraints + \
-      [Constraint(f'canvas_height = {new_height}')]
-    symbols_list = []
-    f_list = []
-    print('symbols', symbols_list)
-    print('flist', f_list)
-    for constraint in full_constraint_list:
-      symbols_list.append(constraint.get_symbol())
-      f_list.append(constraint.get_equation())
-    solution = sympy.solve(f_list, symbols_list)
-    for key in solution:
-      name = str(key).split('_')[0]
-      if(name != 'canvas') & (self.graph.find_node(name) != None):
-        self.graph.set_node_height(name, solution[key])
-      if(name == 'canvas'):
-        self._current_width = float(solution[key])
-    return
+    # for key in solution:
+    #   print(float(solution[key]))
+    self.apply_solution_to_graph(solution)  
+    return 
 
   def find_node(self, name):
     self.graph.find_node_with_name(name)
 
 if __name__ == "__main__":
   demo_cells = [
-    Cell(0, 0, 100, 'fixed', 100, 'fixed', 'B'),
-    Cell(0, 100, 100, 'adaptable', 100, 'adaptable', 'A'),
-    Cell(0, 200, 100, 'adaptable', 100, 'adaptable', 'C'),
-    Cell(0, 300, 100, 'fixed', 100, 'fixed', 'D')
+    Cell(0, 0, 100, 'adaptable', 100, 'adaptable'),
+    # Cell(0, 100, 100, 'fixed', 100, 'fixed', 'A')
   ]
   demo_constraints = []
   demo_layout = Layout(demo_cells, demo_constraints)
-  demo_cells = [
-    Cell(0, 0, 100, 'adaptable', 100, 'fixed', 'B'),
-    Cell(0, 100, 200, 'fixed', 100, 'fixed', 'A'),
-    Cell(0, 300, 300, 'constrained', 100, 'fixed', 'C'),
-  ]
-  demo_constraints = ['C.width = canvas.width / 2']
-  demo_layout = Layout(demo_cells, strings_to_constraints(demo_constraints))
-  demo_layout.resize_layout(demo_layout.get_max_width(), 100)
-  demo_layout.graph._traverse_west_to_east()
+  # demo_cells = [
+  #   Cell(0, 0, 100, 'fixed', 100, 'fixed', 'B'),
+  #   Cell(100, 0, 100, 'adaptable', 100, 'adaptable', 'A'),
+  #   Cell(200, 0, 100, 'adaptable', 100, 'adaptable', 'C'),
+  #   Cell(300, 0, 100, 'fixed', 100, 'fixed', 'D')
+  # ]
+  # demo_constraints = []
+  # demo_layout = Layout(demo_cells, demo_constraints)
+  # demo_cells = [
+  #   Cell(0, 0, 100, 'fixed', 100, 'fixed', 'B'),
+  #   Cell(100, 0, 100, 'adaptable', 100, 'adaptable', 'A'),
+  #   Cell(0, 100, 100, 'adaptable', 100, 'adaptable', 'C'),
+  #   Cell(100, 100, 100, 'fixed', 100, 'fixed', 'D')
+  # ]
+  # demo_constraints = []
+  # demo_layout = Layout(demo_cells, demo_constraints)
+  # demo_cells = [
+  #   Cell(0, 0, 100, 'adaptable', 100, 'fixed', 'B'),
+  #   Cell(0, 100, 200, 'fixed', 100, 'fixed', 'A'),
+  #   Cell(0, 300, 300, 'constrained', 100, 'fixed', 'C'),
+  # ]
+  # demo_constraints = ['C.width = canvas.width / 2']
+  # demo_layout = Layout(demo_cells, strings_to_constraints(demo_constraints))
+  # demo_layout.resize_layout(demo_layout.get_max_width(), 100)
+  # demo_layout.graph._traverse_west_to_east()

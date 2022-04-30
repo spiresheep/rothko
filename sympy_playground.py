@@ -82,7 +82,7 @@ def get_min_and_max_3(): # No regular blue!
   print('The layout max is...' , sympy.solve((eq1, eq2, eq3, eq4, eq5), (a, b, d, e, w)))
 
 def get_mixed_policy(): # No regular blue!
-  a, b, d, e, w, big = sympy.symbols('a, b, d, e, w big')
+  a, b, d, e, w, big = sympy.symbols('a, b, d, e, w, big')
   eq1 = sympy.Equality(a, b * 2)
   eq2 = sympy.Equality(e, w / 2)
   eq3 = sympy.Equality(b, 100) #fixed
@@ -90,9 +90,27 @@ def get_mixed_policy(): # No regular blue!
   eq5 = sympy.Equality(w, a + e + b + d)
   eq7 = sympy.Equality(big, 300)
   # Minimize the leftovers to get min!
-  print('The layout min is...' , sympy.solve((eq1, eq2, eq3, eq4, eq5), (a, b, d, e, w)))
+  print('The layout min is...' , sympy.solve((eq1, eq2, eq3, eq4, eq5, eq7), (a, b, d, e, w, big)))
   # Now to get max!?
   print('The layout max is...' , sympy.solve((eq1, eq2, eq3, eq4, eq5, eq7), (a, b, d, e, w, big)))
+
+def proof_of_concept():
+  a, b, c, d, w = sympy.symbols('a, b, c, d, w')
+  eq1 = sympy.Equality(a, 100)
+  eq2 = sympy.Equality(b,100)
+  eq5 = sympy.Equality(w, a + b + c + d)
+  width = sympy.Equality(w, 1000)
+  adapt1 = sympy.Equality(c, w - a -b -d)
+  adapt2 = sympy.Equality(d, w - a - b -c)
+  print('The solution is...' , sympy.solve((eq1, eq2, eq5), (a, b, c, d, w)))
+
+def rsplit_demo():
+  thing = '_cell_width = 0'
+  new_thing = thing.rsplit('_',1)
+  print(new_thing, thing.count('_'))
+  thing = 'C_height'
+  new_thing = thing.rsplit('_',1)[1]
+  print(new_thing)
 
 if __name__ == "__main__":
   print('~~Start Test~~')
@@ -101,4 +119,5 @@ if __name__ == "__main__":
   # get_min_and_max()
   # get_min_and_max_2()
   # get_min_and_max_3()
-  get_mixed_policy()
+  proof_of_concept()
+  rsplit_demo()
