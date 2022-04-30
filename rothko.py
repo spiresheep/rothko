@@ -254,9 +254,7 @@ if __name__ == "__main__":
       window2 = render_edit_window(layout._current_width, layout._current_height)
     if event == 'UPDATE PREVIEW':
       if(layout.get_classification() == LayoutClassification.STATIC):
-        new_height = values['HEIGHT']
-        new_width = values['WIDTH']
-        resize_canvas(window1['drawing_area'], new_width, new_height)
+        print('Do nothing')
       elif(layout.get_classification() == LayoutClassification.HORIZONTAL_1D) |\
           (layout.get_classification() == LayoutClassification.VERTICAL_1D):
         new_height = values['HEIGHT']

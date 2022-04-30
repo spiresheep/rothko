@@ -95,9 +95,13 @@ class Layout:
       if(str(key) == 'canvas_width'):
         return_values['min_width'] = solution[key]
         return_values['max_width'] = solution[key]
+      else:
+        print('solve for min max')
       if(str(key) == 'canvas_height'):
         return_values['min_height'] = solution[key]
         return_values['max_height'] = solution[key]
+      else:
+        print('solve for min max')
     print('return_values', return_values)
     return return_values
 
