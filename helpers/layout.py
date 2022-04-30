@@ -121,12 +121,9 @@ class Layout:
     for cell in self.graph.get_all_adaptable_height_cells():
       cell_name = cell.get_name()
       core.append(Constraint(f'{cell_name}_height={cell_name}_height'))
-    #print('constraints?', len(core))
-    # Now for a more complicated constraint....
-    #print('width stuff', self.get_width_constraints())
     core = core + self.get_width_constraints()
     core = core + self.get_height_constraints()
-    #beep
+    # Need to add one more type of constraint <_<
    
     #check constraints
     print('~~~~Core Constraints Here')
